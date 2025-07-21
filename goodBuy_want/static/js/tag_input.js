@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const span = document.createElement("span");
       span.className = "badge bg-light text-dark tag-badge me-1";
       span.setAttribute("data-tag", tag);
-      span.innerHTML = `<img src="/static/img/x.png" alt="刪除" style="cursor:pointer; width:12px; height:12px;" class="ms-1 remove-tag"> ${tag} `;
+      span.innerHTML = `<img src="/static/img/x.png" alt="刪除" style="cursor:pointer; width:16px; height:16px;" class="ms-1 remove-tag"> ${tag} `;
       span.querySelector(".remove-tag").addEventListener("click", () => {
         tagSet.delete(tag);
         renderTags();

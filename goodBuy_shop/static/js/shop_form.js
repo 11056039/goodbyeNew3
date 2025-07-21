@@ -258,12 +258,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 300);
   });
 
-    // ✅ 表單送出前更新 tag_names
+    // 表單送出前更新 tag_names
   document.querySelector("form").addEventListener("submit", () => {
     tagHidden.value = [...tagSet].join(",");
   });
 
-  // ✅ 編輯頁初始化舊標籤
+  // 編輯頁初始化舊標籤
   if (window.initialTags) {
     window.initialTags.forEach(t => addTag(t));
   }

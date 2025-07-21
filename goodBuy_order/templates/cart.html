@@ -1,50 +1,69 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
-    {% include 'common/header.html' %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>購物車</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+  {% include 'base.html' %}
 </head>
 <body>
-    
-    <h1>我的購物車</h1>
-    
-    <form method="POST" action="{% url 'delete_multiple_cart_items' %}">
-        {% csrf_token %}
+  <div class="container py-4">
+    <h2 class="fw-bold mb-4">購物車</h2>
+    <form method="POST" action="{% url 'delete_multiple_cart_items' %}" id="cart-form">
+      {% csrf_token %}
 
-        {% for group in grouped_cart %}
-            <h2>{{ group.shop.name }}</h2>
+      {% for group in grouped_cart %}
+        <div class="cart-group mb-4 p-3 bg-white rounded shadow-sm">
+          <!-- 團主資訊列 -->
+          <div class="d-flex align-items-center mb-3">
+            <input type="checkbox" class="form-check-input me-2 group-checkbox">
+            <img src="{{ group.shop.owner.profile.avatar.url }}" class="rounded-circle me-2" width="40" height="40">
+            <strong>{{ group.shop.owner.username }}</strong>
+            <span class="ms-2">-- {{ group.shop.name }}</span>
+          </div>
 
-            <ul>
+          <!-- 商品清單 -->
+          <div class="cart-items">
             {% for entry in group.items %}
-                <li>
-                    <input type="checkbox" name="cart_ids" value="{{ entry.cart.id }}">
-                    商品：{{ entry.product.name }} |
-                    數量：{{ entry.cart.quantity|default:"未填" }}
-                    價格：{{ entry.product.price }} |
-                    {% if entry.is_out_of_stock %}<strong>⚠️缺貨</strong>{% endif %}
-                    {% if entry.is_shop_closed %}<strong>❌已截止</strong>{% endif %}
-
-                    <!-- 修改數量 -->
-                    <!-- <form method="POST" action="{% url 'update_cart_quantity' entry.cart.id %}">
-                        {% csrf_token %}
-                        <input type="number" name="quantity" value="{{ entry.cart.quantity }}" min="1">
-                        <button type="submit">修改數量</button>
-                    </form> -->
-
-                    <!-- 刪除單項 -->
-                    <form method="POST" action="{% url 'delete_cart_item' entry.cart.id %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit">刪除</button>
-                    </form>
-                </li>
+              <div class="cart-item row align-items-center py-2 border-top">
+                <div class="col-1 text-center">
+                  <input type="checkbox" class="form-check-input item-checkbox" name="cart_ids" value="{{ entry.cart.id }}">
+                </div>
+                <div class="col-2">
+                  {% if entry.product.img %}
+                    <img src="{{ entry.product.img.url }}" class="img-thumbnail" width="60">
+                  {% else %}
+                    <div class="bg-light text-muted text-center" style="width: 60px; height: 60px; line-height: 60px;">無圖</div>
+                  {% endif %}
+                </div>
+                <div class="col-3">{{ entry.product.name }}</div>
+                <div class="col-2 text-danger fw-bold">{{ entry.product.price }}$</div>
+                <div class="col-2">
+                  <input type="number" class="form-control form-control-sm quantity-input" value="{{ entry.cart.quantity }}" min="1">
+                </div>
+                <div class="col-2">
+                  <form method="POST" action="{% url 'delete_cart_item' entry.cart.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm">刪除</button>
+                  </form>
+                </div>
+              </div>
             {% endfor %}
-            </ul>
-        {% endfor %}
+          </div>
+
+          <!-- 小計與結帳 -->
+          <div class="d-flex justify-content-end align-items-center mt-3">
+            <div class="me-3 fw-bold text-danger">總計：<span class="group-total">0$</span></div>
+            <button type="submit" class="btn btn-danger">去結帳</button>
+          </div>
+        </div>
+      {% endfor %}
     </form>
+  </div>
+
+  <script src="{% static 'js/cart.js' %}"></script>
 </body>
 </html>
