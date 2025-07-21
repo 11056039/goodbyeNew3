@@ -71,10 +71,10 @@
             <h2>{{ profile_user.username }}</h2>
             <div class="profile-stats">
                 <span>加入時間：{{ profile_user.date_joined|date:"Y/m/d" }}</span>
-                <span>信譽度：<span class="value text-primary">（等後端資料）</span></span>
-                <span>粉絲數：<span class="value text-primary">（等後端資料）</span></span>
-                <span>賣場數：<span class="value text-primary">（等後端資料）</span></span>
-                <span>買過：<span class="value text-primary">（等後端資料）</span></span>
+                <span>信譽度：<span class="value text-primary">{{ average_rank|floatformat:1 }}</span></span>
+                <span>粉絲數：<span class="value text-primary">{{ fans_count }}</span></span>
+                <span>賣場數：<span class="value text-primary">{{ shop_count }}</span></span>
+                <span>買過：<span class="value text-primary">{{ buy_count }}</span></span>
             </div>
         </div>
     </div>
