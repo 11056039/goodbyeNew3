@@ -18,13 +18,15 @@ body {
 }
 
 .profile-avatar {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    margin-right: 36px;
-    object-fit: cover;
+    
+    width: 96px;             /* 固定寬 */
+    height: 96px;            /* 固定高，和寬一樣就會是正圓 */
+    border-radius: 50%;      /* 這一行讓它永遠圓形！ */
+    object-fit: cover;       /* 圖片填滿、不變形、裁切溢出區域 */
     border: 2px solid #c5d6ea;
     background: #f3f3f3;
+    margin-right: 36px;      /* 跟你原本的一樣 */
+    display: block;          /* 讓 img 適應父層 */
 }
 
 .profile-basic h2 {
