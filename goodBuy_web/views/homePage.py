@@ -8,7 +8,16 @@ from goodBuy_want.want_utils import *
 from goodBuy_want.weighting import *
 from goodBuy_want.hot_rank import *
 
+from goodBuy_tag.models import *
+
+from itertools import chain
+from operator import attrgetter
+
 def homePage(request):
+    #篩選
+    post_type = request.GET.get('type')  # sell / want 
+    tag = request.GET.get('tag')         # 標籤名稱 
+
     if request.user.is_authenticated:
         # 個人化推薦（最多 10 筆）
         personalized = personalized_shop_recommendation(request.user, limit=10)
@@ -34,8 +43,27 @@ def homePage(request):
         shops = get_hot_shops(limit=20)
         wants = get_hot_wants(limit=20)
     
+    # 篩選條件：只顯示特定 type（sell / want）
+    if post_type == 'sell':
+        wants = Want.objects.none()
+    elif post_type == 'want':
+        shops = Shop.objects.none()
+
     # 整理資訊
     shops = shopInformation_many(shops)
     wants = wantInformation_many(wants)
+
+    for s in shops:
+        s.post_type = 'shop'
+
+    for w in wants:
+        w.post_type = 'want'
+
+    # 商店混和排序
+    items = sorted(
+        chain(shops, wants), 
+        key=attrgetter('update'), 
+        reverse=True
+    )
 
     return render(request, 'home.html', locals())

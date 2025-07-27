@@ -1,5 +1,5 @@
-.container{
-  background-color: #FDF7EC;
+.main-content {
+  padding-top: 100px; /* 頁首的間距 */
 }
 
 .row.main {

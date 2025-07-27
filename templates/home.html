@@ -4,77 +4,67 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoodBuy</title>
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
-    <!-- Bootstrap 5 CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoodBuy</title>
+  <link rel="stylesheet" href="/static/css/home.css/">
+  <link rel="stylesheet" href="/static/css/card.css/">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    
-    <div class="header"> {% include 'base.html' %} </div>
-    <!-- 商品區塊 -->
-    <div class="container my-4 ">
-      <div class="row main">
-        {% for shop in shops %}
-          <div class="col-md-3 mb-4">
-            <div class="card h-100 position-relative border shadow-sm">
+  <div class="header"> {% include 'base.html' %} </div>
+  <div class="container my-4 main-content">
 
-              <!-- 新增12小時 -->
-              {% if shop.start_time|timeuntil <= '12:00:00' %}
-                <span class="position-absolute top-0 end-0 badge bg-danger text-white m-2">新增</span>
-              {% endif %}
+    <!-- 篩選 -->
+    <div class="d-flex justify-content-end mb-3">
+      <form method="get" class="d-flex gap-2" id="filter-form">
+        <select name="type" class="form-select w-auto " onchange="this.form.submit()">
+          <option value="">全部類型</option>
+          <option value="sell" {% if request.GET.type == 'sell' %}selected{% endif %}>售物帖</option>
+          <option value="want" {% if request.GET.type == 'want' %}selected{% endif %}>收物帖</option>
+        </select>
 
-              <!-- 圖片連結 -->
-              <a href="{% url 'shop' shop.id %}" class="text-decoration-none text-dark">
-              {% with shop.images.all|get_cover as cover_img %}
-                {% if cover_img %}
-                  <img src="{{ cover_img.img.url }}" class="card-img-top">
-                {% else %}
-                  <img src="{% static 'images/no-image.png' %}" class="card-img-top">
-                {% endif %}
-              {% endwith %}
-            
-                <div class="card-body">
-                  <h5 class="card-title fw-bold">{{ shop.name }}</h5>
+        <!-- 不對阿哪來的標籤可以篩選 -->
+        <!-- <select name="tag" class="form-select w-auto">
+          <option value="">全部標籤</option>
+          {% for t in all_tags %}
+            <option value="{{ t.name }}" {% if request.GET.tag == t.name %}selected{% endif %}>
+              {{ t.name }}
+            </option>
+          {% endfor %}
+        </select> 
+        <button type="submit" class="btn btn-outline-primary">篩選</button> -->
+        
+      </form>
+    </div>
 
-                  <!-- 價格 -->
-                  <p class="card-text text-danger mb-2">
-                    ${{ shop.price_min }} - ${{ shop.price_max }}
-                  </p>
+    <!-- 卡片(shop&want) 要寫卡片樣式的去common/card.html--> 
+    <div class="row">
+      {% for item in items %}
+        <div class="col-md-3 mb-3 d-flex justify-content-center">
+          {% if item.post_type == 'shop' %}
+            {% include 'common/card.html' with shop=item type='sell' %}
+          {% elif item.post_type == 'want' %}
+            {% include 'common/card.html' with want=item type='want' %}
+          {% endif %}
+        </div>
+      {% empty %}
+        <p class="text-center text-muted">目前沒有符合條件的資料</p>
+      {% endfor %}
+    </div>
+  </div>
 
-                  <!-- Tags -->
-                  <div class="mb-2">
-                    {% for tag in shop.shop_tag_set.all %}
-                      <span class="badge bg-light text-muted border">#{{ tag.tag.name }}</span>
-                    {% endfor %}
-                  </div>
-                </div>
-              </a>
-
-              <!-- 狀態遮罩 -->
-              {% if shop.shop_state.name == "已結束" %}
-                <div class="position-absolute top-50 start-50 translate-middle bg-dark bg-opacity-75 text-white fw-bold py-2 px-3 rounded">已結束</div>
-              {% elif shop.shop_state.name == "無預算" %}
-                <div class="position-absolute top-50 start-50 translate-middle bg-danger bg-opacity-75 text-white fw-bold py-2 px-3 rounded">無預算</div>
-              {% endif %}
-            </div>
-          </div>
-        {% endfor %}
+  <!-- 登入彈跳視窗 -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div id="modal-content">
+        <!-- login.html -->
       </div>
     </div>
-    
-    <!-- 登入彈跳視窗 -->
-    <div class="modal-overlay" id="modal-overlay">
-        <div class="modal">
-            <div id="modal-content">
-                <!-- login.html -->
-            </div>
-        </div>
-    </div>
+  </div>
 
-    <script src="/static/js/modal.js/"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/modal.js/"></script>
+  <script src="/static/js/cover.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

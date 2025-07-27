@@ -8,7 +8,7 @@ def wantInformation_many(wants):
         wants
         .select_related('permission')
         .prefetch_related(
-            Prefetch('want_tag_set', queryset=WantTag.objects.select_related('tag')),
+            Prefetch('wanttag_set', queryset=WantTag.objects.select_related('tag')),
             Prefetch('images', queryset=WantImg.objects.filter(is_cover=True)),
         )
     )

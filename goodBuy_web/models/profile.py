@@ -1,7 +1,7 @@
 from django.db import models
 from .user import User
 # -------------------------
-# ？
+# 個人資料
 # -------------------------
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
