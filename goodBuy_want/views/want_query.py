@@ -92,7 +92,7 @@ def wantById_one(request, want):
             defaults={'date': timezone.now()}
         )
     
-    return render(request, '別人收物帖', locals())
+    return render(request, 'want_detail.html', locals())
 
 # -------------------------
 # 收物帖查詢 - search
