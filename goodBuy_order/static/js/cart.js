@@ -118,8 +118,9 @@ document.addEventListener("DOMContentLoaded", function () {
   function updateCartCount() {
   const checkedItems = document.querySelectorAll(".item-checkbox:checked");
   const count = checkedItems.length;
-  document.getElementById("cart-count").textContent = `總共 ${count} 個商品`;
+  document.getElementById("cart-count").textContent = `已選取 ${count} 個商品`;
   updateCartCount() // 初始化時更新一次
   }
 
 });
+
