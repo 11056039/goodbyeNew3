@@ -20,6 +20,172 @@
 /* 隱藏的側邊欄 */
 .menu {
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 270px;
+    height: 100vh;
+    background: #dde9f4;
+    box-shadow: 1px 0 8px rgba(0,0,0,0.08);
+    z-index: 1500;
+    transition: left 0.3s;
+    overflow-y: auto;
+    padding: 0;
+    border-right: 1.5px solid #bfd6e9;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu:not(.active) {
+    left: -290px;
+}
+
+.menu .user-info1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 25px 16px 16px 18px;
+    border-bottom: 1.5px solid #bfd6e9;
+    background: #dde9f4;
+}
+
+.menu .user-info1 img.avatar {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    background: #e8e8e8;
+}
+
+.menu .user-info1 .name-edit {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.menu .user-info1 .name-edit h3 {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0 0 2px 0;
+    color: #174c6d;
+    letter-spacing: 2px;
+}
+.menu .user-info1 .name-edit a {
+    font-size: 13px;
+    color: #0b2339;
+    opacity: 0.7;
+    margin-left: 2px;
+    margin-top: 0;
+    text-decoration: underline;
+}
+
+.menu .btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 0 0 12px 0;
+    padding: 0 0;
+    background: none;
+}
+
+.menu .btn-group .Options {
+    background: none;
+    color: #163658;
+    border-radius: 0;
+    width: 100%;
+    padding: 12px 30px 12px 30px;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid #bfd6e9;
+    transition: background 0.18s;
+}
+.menu .btn-group .Options:hover {
+    background: #eaf2f8;
+    color: #085494;
+}
+
+.menu .btn-group .Options:last-child {
+    border-bottom: none;
+}
+
+/* 分隔線 */
+.menu hr {
+    border: none;
+    border-bottom: 1.5px solid #0e416a;
+    margin: 10px 0 4px 0;
+}
+
+/* 追蹤區塊 */
+.user-target {
+    font-size: 15px;
+    font-weight: bold;
+    color: #255c96;
+    background: #c0daf3;
+    margin: 0 0 0 0;
+    padding: 7px 0 7px 16px;
+    letter-spacing: 1px;
+    border-top: 2.5px solid #b2cfe5;
+    border-bottom: 1.5px solid #bfd6e9;
+}
+.sidebar-title{
+    font-weight: bold;
+}
+.sidebar-tracks {
+    background: #dde9f4;
+    padding: 0 0 0 0;
+    margin: 0;
+    list-style: none;
+}
+.sidebar-tracks li {
+    border-bottom: 1px solid #bfd6e9;
+}
+.sidebar-tracks li:last-child {
+    border-bottom: none;
+}
+.sidebar-tracks a {
+    display: block;
+    color: #23659c;
+    font-size: 15px;
+    padding: 11px 0 11px 28px;
+    text-decoration: none;
+    transition: background 0.12s;
+}
+.sidebar-tracks a:hover {
+    background: #cbe0f6;
+    color: #133c6d;
+}
+
+.menu .tellme1, .menu .tellme {
+    padding: 18px 0 10px 0;
+    font-size: 13px;
+    color: #45637c;
+    background: none;
+    border-top: 1.5px solid #bfd6e9;
+    margin: 0 0 0 0;
+}
+
+.menu .social-icons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-left: 15px;
+    margin-top: 7px;
+}
+
+.menu .social-icons img {
+    width: 22px;
+    height: 22px;
+    opacity: 0.83;
+    transition: opacity 0.16s;
+}
+.menu .social-icons img:hover {
+    opacity: 1;
+}
+/* ----------------------------------------------------- */
+.menu {
+    position: fixed;
     top: 120px;
     left: -550px;
     width: 400px;

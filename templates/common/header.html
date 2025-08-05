@@ -1,99 +1,114 @@
 <!-- 我要瘋了 -->
-  <link rel="stylesheet" href="/static/css/header.css/">
-  <script defer src="/static/js/list.js/"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  
-  <header class="header">
-    <button class="menu-btn" id="menu-toggle" aria-label="菜單">
-        <img src="/static/img/menu.png/" alt="Menu" />
-    </button>
-  
+  <!-- 在 base.html 或你想要的地方加這段 -->
+<link rel="stylesheet" href="/static/css/header.css">
+<script defer src="/static/js/list.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<header class="header">
+  <button class="menu-btn" id="menu-toggle" aria-label="菜單">
+    <img src="/static/img/menu.png" alt="Menu" />
+  </button>
+
   <div class="logo">
-      <a href="{% url 'home' %}">
-          <img alt="GoodBye Logo" src="/static/img/logolong.png" />
-      </a>
+    <a href="{% url 'home' %}">
+      <img alt="GoodBye Logo" src="/static/img/logolong.png" />
+    </a>
   </div>
 
-    <!-- Search Bar -->
-    <form action="{% url 'home' %}" method="get" class="search-bar d-flex">
-      <input type="text" name="q" value="{{ request.GET.q }}" placeholder="有什麼喜歡的東西嗎？" >
-      <button type="submit" aria-label="搜索"><i class="fas fa-search"></i></button>
-    </form>
-  
-    <!-- 購物車 -->
-    <a href="/cart/">
-        <button class="msg-btn" aria-label="購物車">
-            <img src="/static/img/cart.png" alt="購物車">
-        </button>
-    </a>
-  
-    <!-- 漢堡清單 -->
-    <nav class="menu" id="menu">
-      {% if request.user.is_authenticated %}
-        <div class="user-info1">
-          {% if user.profile.avatar %}
-            <img src="{{ user.profile.avatar.url }}" class="avatar">
-          {% else %}
-            <img src="/static/img/Defuser.png/" class="avatar">
-          {% endif %}
-          <div class="name-edit">
-            <h3>{{ request.user.username }}</h3>
-            <a href="/user/editprofile/">點擊編輯個人資料></a>
-          </div>
-        </div>
-        <div class="user-info2">
-          <div class="btn-group">
-            <a href="{% url 'home' %}" class="Options">回首頁</a>
-            <a href="/want/add/" class="Options">發布收物帖</a>
-            <a href="/shop/add/" class="Options">新增賣場</a>
-            <a href="/user/payment_accounts/" class="Options">管理付款方式</a>
-            <a href="#" class="Options">團務管理</a>
-            <a href="/order/list/" class="Options">訂單管理</a>
-            <a href="#" class="Options">去記帳 $</a>
-            <a href="{% url 'blacklist' %}" class="Options">我的黑名單</a>
-            <a href="{% url 'my_shops_collected' %}" class="Options">我的收藏商店</a>
-            <a href="{% url 'logout' %}">登出</a>
-            
-          </div>
-        </div>
+  <!-- Search Bar -->
+  <form action="{% url 'home' %}" method="get" class="search-bar d-flex">
+    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="有什麼喜歡的東西嗎？" >
+    <button type="submit" aria-label="搜索"><i class="fas fa-search"></i></button>
+  </form>
 
-        <hr/>
+  <a href="/cart/">
+    <button class="msg-btn" aria-label="購物車">
+      <img src="/static/img/cart.png" alt="購物車">
+    </button>
+  </a>
 
-        <div class="user-target">正在追蹤：
-
-        </div>
-        <div class="tellme1">
-          <hr/>
-          <p>問題回饋 GoodBuy114509@gmail.com</p>
-          <p>追蹤我們：
-            <div class="social-icons">
-              <a href="#"><img src="/static/img/facebook.png" alt="Facebook" /></a>
-              <a href="#"><img src="/static/img/instagram.png" alt="Instagram" /></a>
-              <a href="#"><img src="/static/img/line.png" alt="LINE" /></a>
-            </div>
-        </div>
+  <!-- 側邊彈出欄 -->
+  <nav class="menu" id="menu">
+  {% if request.user.is_authenticated %}
+    <div class="user-info1">
+      {% if user.profile.avatar %}
+        <img src="{{ user.profile.avatar.url }}" class="avatar">
       {% else %}
-        <div class="user-info">
-          <img src="/static/img/Defuser.png" class="defuser" />
-          <div class="user-text"><h3>未登入</h3></div>
-        </div>
-        <div class="user-actions">
-          <a href="/login/" class="Options">登入</a>
-          <p>（登入一下又不會少一塊肉）</p>
-          <a href="/register/" class="Options">註冊</a>
-          <p>（咳咳註冊一個花不了幾分鐘）</p>
-        </div>
-        <div class="tellme">
-          <hr/>
-          <p>問題回饋 GoodBuy114509@gmail.com</p>
-          <p>追蹤我們：
-            <div class="social-icons">
-              <a href="#"><img src="/static/img/facebook.png" alt="Facebook" /></a>
-              <a href="#"><img src="/static/img/instagram.png" alt="Instagram" /></a>
-              <a href="#"><img src="/static/img/line.png" alt="LINE" /></a>
-            </div>
-        </div>
+        <img src="/static/img/Defuser.png" class="avatar">
       {% endif %}
-    </nav>
-  </header>
-  
+      <div class="name-edit">
+        <h3>{{ request.user.username }}</h3>
+        <a href="/user/editprofile/">點擊編輯個人資料&gt;</a>
+      </div>
+    </div>
+    <!-- 分組功能區 -->
+    <ul class="sidebar-links">
+      <br>
+      <li><a href="{% url 'home' %}">首頁</a></li>
+      <li><a href="{% url 'my_shops_collected' %}">收藏</a></li>
+      <li><a href="#">記帳本</a></li>
+      <li><a href="{% url 'blacklist' %}">黑名單</a></li>
+    </ul>
+    <br>
+    <hr>
+    <ul class="sidebar-links">
+      <br>
+      <li><a href="/shop/add/">新增賣場</a></li>
+      <li><a href="#">賣方管理</a></li>
+    </ul>
+    <hr>
+    <ul class="sidebar-links">
+      <br>
+      <li><a href="/want/add/">發布收物帖</a></li>
+      <li><a href="#">買方管理</a></li>
+    </ul>
+    <hr>
+
+    <!-- 追蹤清單，支援跳轉 -->
+    <div class="sidebar-title">正在追蹤</div>
+    <hr>
+    <br>
+    <ul class="sidebar-tracks">
+      {% for track in followings %}
+        <li>
+          <a href="{% url 'shop' track.id %}">{{ track.name }} &gt;</a>
+        </li>
+      {% empty %}
+        <li>目前沒有追蹤</li>
+      {% endfor %}
+    </ul>
+
+    <div class="sidebar-bottom">
+      <p>問題回饋 GoodBuy114509@gmail.com</p>
+      <div class="social-icons">
+        <a href="#"><img src="/static/img/facebook.png" alt="Facebook" /></a>
+        <a href="#"><img src="/static/img/instagram.png" alt="Instagram" /></a>
+        <a href="#"><img src="/static/img/line.png" alt="LINE" /></a>
+      </div>
+    </div>
+  {% else %}
+    <div class="user-info">
+      <img src="/static/img/Defuser.png" class="defuser" />
+      <div class="user-text"><h3>未登入</h3></div>
+    </div>
+    <div class="user-actions">
+      <a href="/login/" class="Options">登入</a>
+      <p>（登入一下又不會少一塊肉）</p>
+      <a href="/register/" class="Options">註冊</a>
+      <p>（咳咳註冊一個花不了幾分鐘）</p>
+    </div>
+    <div class="tellme">
+      <hr/>
+      <p>問題回饋 GoodBuy114509@gmail.com</p>
+      <p>追蹤我們：
+        <div class="social-icons">
+          <a href="#"><img src="/static/img/facebook.png" alt="Facebook" /></a>
+          <a href="#"><img src="/static/img/instagram.png" alt="Instagram" /></a>
+          <a href="#"><img src="/static/img/line.png" alt="LINE" /></a>
+        </div>
+      </p>
+    </div>
+  {% endif %}
+</nav>
+
+</header>
