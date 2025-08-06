@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from goodBuy_shop.models import Shop
 from goodBuy_want.models import Want
+from django.db.models import Q
 
 # -------------------------
 # 物件存在檢查
@@ -148,7 +149,7 @@ def object_owner_required(
 #         return _wrapped_view
 #     return decorator
 
-def blacklist_check(owner_getter, redirect_to='home', msg='你已被此使用者封鎖。', context_name='obj'):
+def blacklist_check(owner_getter, redirect_to='home', msg='你與此使用者有封鎖關係，無法查看。', context_name='obj'):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
@@ -156,12 +157,22 @@ def blacklist_check(owner_getter, redirect_to='home', msg='你已被此使用者
             if obj and request.user.is_authenticated:
                 owner = owner_getter(obj)
                 from goodBuy_web.models import Blacklist
-                if Blacklist.objects.filter(user=owner, black_user=request.user).exists():
+
+                # 雙向封鎖檢查
+                blocked = Blacklist.objects.filter(
+                    Q(user=owner, black_user=request.user) |
+                    Q(user=request.user, black_user=owner)
+                ).exists()
+
+                if blocked:
+                    print(f"[封鎖觸發] {owner} ⛔ {request.user}（雙向擋）")
                     messages.error(request, msg)
                     return redirect(redirect_to)
+
             return view_func(request, *args, **kwargs)
         return _wrapped_view
     return decorator
+
 
 # -------------------------
 # 訂單是否屬於買家檢查

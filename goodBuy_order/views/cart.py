@@ -70,18 +70,23 @@ def add_to_cart(request, product):
     if product.shop.is_end:
         messages.error(request, "該商店已截止")
         return redirect('shop', shop_id=product.shop.id)
+
     try:
         quantity = int(request.POST.get('quantity', 1))
         if quantity < 1:
-            messages.error(request, "數量必須大於0")
+            messages.error(request, "數量必須大於 0")
             return redirect('shop', shop_id=product.shop.id)
     except ValueError as e:
         messages.error(request, str(e))
         return redirect('shop', shop_id=product.shop.id)
 
     cart = Cart(user=request.user)
-    cart.add_or_update_product(product, quantity)
-    messages.success(request, f'成功將 {product.name} 加入購物車')
+
+    try:
+        cart.add_or_update_product(product, quantity)
+        messages.success(request, f'成功將 {product.name} 加入購物車')
+    except ValueError as e:
+        messages.error(request, str(e))
 
     return redirect('shop', shop_id=product.shop.id)
 
@@ -123,19 +128,20 @@ def update_cart_quantity(request, cart_item):
         return redirect('cart')
 
     other_cart_qty = (
-        Cart.objects.filter(product=cart_item.product)
+    Cart.objects.filter(product=cart_item.product)
         .exclude(id=cart_item.id)
-        .aggregate(total=Sum('amount'))['total'] or 0
+        .aggregate(total=Sum('quantity'))['total'] or 0
     )
     available_stock = cart_item.product.stock - other_cart_qty
 
     if new_qty > available_stock:
         messages.warning(request, f'{cart_item.product.name} 最多只能購買 {available_stock} 件')
-        cart_item.amount = available_stock
+        cart_item.quantity = available_stock
     else:
-        cart_item.amount = new_qty
+        cart_item.quantity = new_qty
 
     cart_item.update = timezone.now()
     cart_item.save()
-    messages.success(request, f'{cart_item.product.name} 數量已更新為 {cart_item.amount}')
-    return redirect('cart')
+    messages.success(request, f'{cart_item.product.name} 數量已更新為 {cart_item.quantity}')
+    referer = request.META.get('HTTP_REFERER', '/')
+    return redirect(referer)

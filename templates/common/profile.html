@@ -73,7 +73,7 @@
             <h2>{{ profile_user.username }}</h2>
             <div class="profile-stats">
                 <span>加入時間：{{ profile_user.date_joined|date:"Y/m/d" }}</span>
-                <span>信譽度：<span class="value text-primary">{{ average_rank|floatformat:1 }}</span></span>
+                <span>信譽度：<span class="value text-primary">{{ average_rank }}</span></span>
                 <span>粉絲數：<span class="value text-primary">{{ fans_count }}</span></span>
                 <span>賣場數：<span class="value text-primary">{{ shop_count }}</span></span>
                 <span>買過：<span class="value text-primary">{{ buy_count }}</span></span>
@@ -81,6 +81,9 @@
         </div>
     </div>
 
+    {% if block_reason %}
+        <div class="alert alert-danger" role="alert">{{ block_reason }}</div>
+    {% else %}
     <!-- 售物卡片區 -->
     <div class="profile-section-title">{{ profile_user.username }}的賣場：</div>
     <div class="profile-card-list row">
@@ -139,15 +142,26 @@
             </div>
         {% endif %}
     </div>
+    {% endif %}
 
     <!-- 加入黑名單按鈕 -->
     {% if request.user.is_authenticated and request.user.id != profile_user.id %}
-    <form method="POST" action="{% url 'blacklist_add' %}">
-        {% csrf_token %}
-        <input type="hidden" name="black_user_id" value="{{ profile_user.id }}">
-        <button type="submit" class="btn btn-danger">加入黑名單</button>
-    </form>
+        {% if is_blocked %}
+            <form method="POST" action="{% url 'blacklist_remove' %}">
+                {% csrf_token %}
+                <input type="hidden" name="black_user_id" value="{{ profile_user.id }}">
+                <button type="submit" class="btn btn-secondary">移除黑名單</button>
+            </form>
+        {% else %}
+            <form method="POST" action="{% url 'blacklist_add' %}">
+                {% csrf_token %}
+                <input type="hidden" name="black_user_id" value="{{ profile_user.id }}">
+                <button type="submit" class="btn btn-danger">加入黑名單</button>
+            </form>
+        {% endif %}
     {% endif %}
+
+    
 </div>
 </body>
 </html>

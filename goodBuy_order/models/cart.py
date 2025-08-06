@@ -29,6 +29,13 @@ class Cart(models.Model):
 
         obj.save()
         return obj
+    
+    def get_quantity(self, product):
+        try:
+            obj = Cart.objects.get(user=self.user, product=product)
+            return obj.quantity
+        except Cart.DoesNotExist:
+            return 0
 
     def __str__(self):
         return f'{self.product} * {self.quantity}'

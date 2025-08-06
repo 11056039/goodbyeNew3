@@ -186,7 +186,7 @@ def checkout_step1(request):
         with transaction.atomic():
             for shop, items in shop_groups.items():
                 if shop.purchase_priority_id != 1:
-                    # 搶購商店 → 加入 Intent 記錄
+                    # 多帶商店 → 加入 Intent 記錄
                     shop = maybe_extend_rush(shop)
                     intent, _ = PurchaseIntent.objects.get_or_create(user=request.user, shop=shop)
 
@@ -210,7 +210,7 @@ def checkout_step1(request):
                         if qty > available_qty:
                             messages.warning(request, f'{product.name} 庫存不足，已調整為 {available_qty} 件')
 
-                    messages.success(request, f'{shop.name} 搶購已加入，請等待分配結果')
+                    messages.success(request, f'{shop.name} 多帶已加入，請等待分配結果')
                     continue
 
                 # 一般商店 → 建立訂單
@@ -240,7 +240,7 @@ def checkout_step1(request):
                 request.session['pending_order_ids'] = created_order_ids
                 return redirect('checkout_step2')
 
-            # 全部是搶購 → 結束流程，不進入 Step2
+            # 全部是多帶 → 結束流程，不進入 Step2
             return redirect('order_list')
 
     except Exception as e:
