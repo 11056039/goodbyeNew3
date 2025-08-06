@@ -30,7 +30,8 @@ def add_to_blacklist(request):
             Blacklist.objects.create(user=request.user, black_user=black_user)
             messages.success(request, '成功加入黑名單')
 
-        return redirect('blacklist')
+        referer = request.META.get('HTTP_REFERER', '/')
+        return redirect(referer)
 
 @login_required
 def remove_from_blacklist(request):
@@ -38,4 +39,6 @@ def remove_from_blacklist(request):
         black_user_id = request.POST.get('black_user_id')
         Blacklist.objects.filter(user=request.user, black_user_id=black_user_id).delete()
         messages.success(request, '已從黑名單中移除')
-        return redirect('blacklist')
+
+        referer = request.META.get('HTTP_REFERER', '/')
+        return redirect(referer)
