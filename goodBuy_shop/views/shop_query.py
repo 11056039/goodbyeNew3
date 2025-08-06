@@ -30,20 +30,6 @@ def record_shop_click(request, shop):
     ShopRecommendationHistory.objects.filter(filters).update(clicked=True)
 
 # -------------------------
-# 主頁商店推送
-# -------------------------
-def homepage(request):
-    if request.user.is_authenticated:
-        personalized = personalized_shop_recommendation(request.user, limit=10)
-        hot = get_hot_shops(limit=10)
-        hot = hot.exclude(id__in=[s.id for s in personalized])[:10]
-        recommendations = list(personalized) + list(hot)
-    else:
-        recommendations = get_hot_shops(limit=20)
-    
-    return render(request, 'homepage.html', {'recommendations': recommendations})
-
-# -------------------------
 # 商店查詢 - user-id
 # -------------------------
 @user_exists_required
@@ -64,7 +50,7 @@ def shopByUserId_many(request, user):
         )
     else:
         base_queryset = Shop.objects.filter(owner=user, permission__id=1)
-        hot_shops = get_hot_shops(limit=100)
+        hot_shops = get_hot_shops(owner=user)
         recommended = [s for s in hot_shops if s.owner_id == user.id]
 
     shops = shopInformation_many(recommended)
@@ -73,7 +59,9 @@ def shopByUserId_many(request, user):
 # -------------------------
 # 商店查詢 - shop-id - 單一店鋪界面
 # -------------------------
-@shop_exists_and_not_blacklisted()
+# @shop_exists_and_not_blacklisted()
+@shop_exists_required  # 負責查出 shop 並加進 kwargs
+@blacklist_check(lambda shop: shop.owner, msg='你已被此賣家封鎖', context_name='shop')  # 拿 kwargs['shop'] 來做封鎖檢查
 def shopById_one(request, shop):
     #TAG
     tags = Tag.objects.filter(shoptag__shop=shop) 
@@ -154,6 +142,7 @@ def shopById_one(request, shop):
     announcements = ShopAnnouncement.objects.filter(shop=shop).order_by('-update')
     shop_images = shop.images.all()
     return render(request, 'shop_detail.html', locals())
+
 # -------------------------
 # 商店查詢 - search
 # -------------------------

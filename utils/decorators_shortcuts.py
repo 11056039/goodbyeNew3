@@ -6,6 +6,7 @@ from goodBuy_tag.models import Tag
 from goodBuy_order.models import *
 from goodBuy_want.models import Want
 
+
 User = get_user_model()
 
 # --- 基礎存在驗證 ---
@@ -141,49 +142,6 @@ order_payment_owner_required = object_owner_required(
     deleted_check=lambda p: p.order.shop.permission_id == 3,
     deleted_msg='此付款所屬商店已被刪除'
 )
-
-# --- 黑名單組合 ---
-# -------------------------
-# 商店存在 & 非黑名單檢查
-# -------------------------
-def shop_exists_and_not_blacklisted():
-    return lambda view_func: \
-        blacklist_check(lambda shop: shop.owner, msg='你已被此賣家封鎖，無法查看')(\
-            shop_exists_required(view_func))
-# -------------------------
-# 商品存在 & 非黑名單檢查
-# -------------------------
-def product_exists_and_not_blacklisted():
-    return lambda view_func: \
-        blacklist_check(lambda product: product.shop.owner, msg='你已被此賣家封鎖，無法查看')(\
-            product_exists_required(view_func))
-# -------------------------
-# 收物帖存在 & 非黑名單檢查
-# -------------------------
-def want_exists_and_not_blacklisted():
-    return lambda view_func: \
-        blacklist_check(lambda want: want.user, msg='你已被此賣家封鎖，無法查看')(\
-            want_exists_required(view_func))
-# -------------------------
-# 使用者存在 & 非黑名單檢查
-# -------------------------
-def user_exists_and_not_blacklisted():
-    return lambda view_func: \
-        blacklist_check(lambda user: user, msg='你已被此使用者封鎖，無法查看')(\
-            user_exists_required(view_func))
-# -------------------------
-# 公告存在 & 非黑名單檢查
-# -------------------------
-def announcement_exists_and_shop_visible():
-    return lambda view_func: \
-        blacklist_check(lambda a: a.shop.owner, msg='你已被此賣家封鎖，無法查看')(\
-            object_exists_required(
-                model=ShopAnnouncement,
-                arg_name='announcement_id',
-                context_name='announcement',
-                deleted_check=lambda a: a.shop.permission_id == 3,
-                deleted_msg='此公告所屬商店已被刪除'
-            )(view_func))
 
 # --- 訂單買家和賣家檢查 ---
 # -------------------------
