@@ -33,11 +33,11 @@ def view_profile(request, user):
         else:
             block_reason = None
     if request.user.is_authenticated:
-        user_shops = get_hot_shops(user=request.user, owner=profile_user, request=request, limit=10)
-        user_wants = get_hot_wants(user=request.user, owner=profile_user, request=request, limit=10)
+        user_shops = personalized_shop_recommendation(request=request, owner=profile_user, limit=10)
+        user_wants = personalized_want_recommendation(request=request, owner=profile_user, limit=10)
     else:
-        user_shops = get_hot_shops(user=request.user, owner=profile_user, request=request, limit=10)
-        user_wants = get_hot_wants(user=request.user, owner=profile_user, request=request, limit=10)
+        user_shops = get_hot_shops(request=request, owner=profile_user, limit=10)
+        user_wants = get_hot_wants(request=request, owner=profile_user, limit=10)
 
     # 幫每個 shop 補 cover_img、價格等欄位
     for shop in user_shops:
@@ -80,9 +80,9 @@ def user_more(request, user_id, tab):
         if request.user.is_authenticated and request.user == profile_user:
             items = Shop.objects.filter(owner=profile_user).order_by('-update')
         elif request.user.is_authenticated:
-            items = get_hot_shops(user=request.user, owner=profile_user, request=request, limit=10)
+            items = personalized_shop_recommendation(request=request, owner=profile_user, limit=10)
         else:
-            items = get_hot_shops(owner=profile_user, request=request, limit=10)
+            items = get_hot_shops(request=request, owner=profile_user, limit=10)
         
         for shop in items:
             shop.cover_img = ShopImg.objects.filter(shop=shop, is_cover=True).first()
@@ -99,7 +99,7 @@ def user_more(request, user_id, tab):
         if request.user.is_authenticated and request.user == profile_user:
             items = Want.objects.filter(owner=profile_user).order_by('-date')
         elif request.user.is_authenticated:
-            items = get_hot_wants(user=request.user, owner=profile_user, request=request, limit=10)
+            items = personalized_want_recommendation(user=request.user, owner=profile_user, request=request, limit=10)
         else:
             items = get_hot_wants(owner=profile_user, request=request, limit=10)
 
