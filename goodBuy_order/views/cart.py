@@ -88,6 +88,7 @@ def view_cart(request):
 def add_to_cart(request, product):
     if product.shop.is_end:
         messages.error(request, "該商店已截止")
+        print(f'商店 {product.shop.name} 不在開放期間，無法加入購物車')
         return redirect('shop', shop_id=product.shop.id)
 
     try:
@@ -103,6 +104,7 @@ def add_to_cart(request, product):
 
     try:
         cart.add_or_update_product(product, quantity)
+        print(f'加入購物車: {product.name}, 數量: {quantity}')
         messages.success(request, f'成功將 {product.name} 加入購物車')
     except ValueError as e:
         messages.error(request, str(e))
