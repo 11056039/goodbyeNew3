@@ -30,21 +30,12 @@ def homePage(request):
     #如果搜尋有東西 就開始搜尋商店/收物帖/tag
     if q:
         # 查詢符合關鍵字的 Shop
-        shops = Shop.objects.filter(
-            Q(name__icontains=q) | Q(introduce__icontains=q) |
-            Q(product__name__icontains=q) |
-            Q(shoptag__tag__name__icontains=q),
-            permission__id=1
-        ).distinct()
+        shops = get_hot_shops(request=request, keyword=q, limit=10)
         for shop in shops:
             shop.post_type = 'shop'
 
         # 查詢符合關鍵字的 Want
-        wants = Want.objects.filter(
-            Q(title__icontains=q) | Q(post_text__icontains=q) |
-            Q(wanttag__tag__name__icontains=q),
-            permission__id=1
-        ).distinct()
+        wants = get_hot_wants(request=request, keyword=q, limit=10)
         for want in wants:
             want.post_type = 'want'
 

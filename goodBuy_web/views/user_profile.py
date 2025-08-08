@@ -19,7 +19,7 @@ def view_profile(request, user):
     block_reason = None
 
     # === 黑名單判斷 ===
-    if request.user != profile_user:
+    if request.user != profile_user and request.user.is_authenticated:
         you_blocked = Blacklist.objects.filter(user=request.user, black_user=profile_user).exists()
         blocked_by = Blacklist.objects.filter(user=profile_user, black_user=request.user).exists()
 
