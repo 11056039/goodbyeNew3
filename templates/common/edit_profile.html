@@ -100,32 +100,38 @@
 
 
 
-                      <!-- 已儲存的銀行／付款帳戶（展示版） -->
-            <div class="section" style="margin-top: 2rem;">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <div class="section-header mb-0">我的銀行／付款帳戶</div>
-                <!-- 直接連到你的管理頁（請改成你實際路徑）；避免 NoReverseMatch -->
-                <a href="/user/payment_accounts/" class="btn btn-primary">＋ 新增／管理帳戶</a>
-              </div>
+          <div class="section" style="margin-top: 2rem;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="section-header mb-0">我的銀行／付款帳戶</div>
+              
+              <a href="/user/payment_accounts/" class="btn btn-primary">＋ 新增／管理帳戶</a>
+            </div>
 
-              <div class="section-body">
-                {% if accounts %}
+            <div class="section-body">
+
+              {% with all_accounts=request.user.paymentaccount_set.all %}
+                {% if all_accounts %}
                   <ul class="list-group">
-                    {% for acc in accounts %}
-                      <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                          {% if acc.payment %}<div>付款方式：{{ acc.payment.name }}</div>{% endif %}
-                          {% if acc.account %}<div>帳號：{{ acc.account }}</div>{% endif %}
-                        </div>
-                        {% if acc.created_at %}<small class="text-muted">建立於：{{ acc.created_at|date:"Y/m/d H:i" }}</small>{% endif %}
-                      </li>
+                    {% for acc in all_accounts %}
+                      {% if not acc.is_delete %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                          <div>
+                            {% if acc.payment %}<div>付款方式：{{ acc.payment.name }}</div>{% endif %}
+                            {% if acc.account %}<div>帳號：{{ acc.account }}</div>{% endif %}
+                          </div>
+                          {% if acc.created_at %}
+                            <small class="text-muted">建立於：{{ acc.created_at|date:"Y/m/d H:i" }}</small>
+                          {% endif %}
+                        </li>
+                      {% endif %}
                     {% endfor %}
                   </ul>
                 {% else %}
                   <p class="text-muted mb-0">尚未新增任何帳戶</p>
                 {% endif %}
-              </div>
+              {% endwith %}
             </div>
+          </div>
 
                 <!-- 按鈕區 -->
             <div class="button-row">
