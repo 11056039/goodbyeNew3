@@ -100,12 +100,10 @@
 
 
 
-          <div class="section" style="margin-top: 2rem;">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <div class="section-header mb-0">我的銀行／付款帳戶</div>
+          <div class="section">
+            <div class="section-header">我的銀行／付款帳戶 : </div>
               
-              <a href="/user/payment_accounts/" class="btn btn-primary">＋ 新增／管理帳戶</a>
-            </div>
+            
 
             <div class="section-body">
 
@@ -130,9 +128,12 @@
                   <p class="text-muted mb-0">尚未新增任何帳戶</p>
                 {% endif %}
               {% endwith %}
+              <br>
+              <a href="/user/payment_accounts/" class="btn btn-primary">＋ 新增／管理帳戶</a>
             </div>
+            
           </div>
-
+          
                 <!-- 按鈕區 -->
             <div class="button-row">
                 <a href="{% url 'home' %}" class="btn-cancel">取消</a>
