@@ -1,5 +1,8 @@
 # goodBuy_want/forms.py
 from django import forms
+from django.db.models import Q
+from django.utils import timezone
+
 from goodBuy_shop.models import Shop
 from goodBuy_want.models import WantBack, Want
 
@@ -26,10 +29,15 @@ class ChooseShopToReplyForm(forms.Form):
             user=user, want=want
         ).values_list('shop_id', flat=True)
 
+        now = timezone.now()
         qs = Shop.objects.filter(
             owner=user,
-            permission__id__in=[1, 2]
-        ).exclude(id__in=replied_shop_ids).order_by('-update')
+            permission__id__in=[1, 2],
+        ).filter(
+            Q(end_time__isnull=True) | Q(end_time__gt=now)   # ✅ 未設定截止 或 尚未截止
+        ).exclude(
+            id__in=replied_shop_ids
+        ).order_by('-update')
 
         self.fields['shop'].queryset = qs
 
