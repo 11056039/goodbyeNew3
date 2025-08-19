@@ -10,6 +10,15 @@ from ...rush_utils import get_rush_summaries
 ORDER_STATE_INIT = 1
 PAY_STATE_UNPAID = 1
 
+'''
+dry run test
+python manage.py auto_allocate_rush_orders --dry-run
+
+只看特定商店
+python manage.py auto_allocate_rush_orders --dry-run --shop 123
+
+'''
+
 class Command(BaseCommand):
     help = "自動分配多帶商店的訂單（截止）"
 
