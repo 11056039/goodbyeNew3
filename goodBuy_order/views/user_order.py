@@ -175,12 +175,15 @@ def checkout_step1(request):
         product = get_object_or_404(Product, id=product_id, is_delete=False)
         if product.stock < quantity:
             messages.error(request, f'{product.name} 庫存不足')
+            print(f'{product.name} 庫存不足')
             return redirect('cart')
         if product.shop.permission_id != 1:
             messages.error(request, f'{product.shop.name} 商店已下架')
+            print(f'{product.shop.name} 商店已下架')
             return redirect('cart')
-        if product.shop.is_end:
+        if not product.shop.is_active:
             messages.error(request, f'{product.shop.name} 商店尚未開啟或已結束')
+            print(f'{product.shop.name} 商店尚未開啟或已結束')
             return redirect('cart')
         
         shop_groups[product.shop].append({'product': product, 'quantity': quantity})
@@ -193,11 +196,14 @@ def checkout_step1(request):
         for item in cart_items:
             if item.product.stock < quantity:
                 messages.error(request, f'{item.product.name} 庫存不足')
+                print(f'{item.product.name} 庫存不足')
                 return redirect('cart')
             if item.product.shop.permission_id != 1:
                 messages.error(request, f'{item.product.shop.name} 商店已下架')
-            if item.product.shop.is_active:
+                print(f'{item.product.shop.name} 商店已下架')
+            if not item.product.shop.is_active:
                 messages.error(request, f'{item.product.shop.name} 商店尚未開啟或已結束')
+                print(f'{item.product.shop.name} 商店尚未開啟或已結束')
                 return redirect('cart')
             
             shop_groups[item.product.shop].append({'product': item.product, 'quantity': item.quantity})
