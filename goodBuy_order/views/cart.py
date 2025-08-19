@@ -86,7 +86,7 @@ def view_cart(request):
 @login_required(login_url='login')
 @product_exists_and_not_own_shop_required
 def add_to_cart(request, product):
-    if product.shop.is_active:
+    if not product.shop.is_active:
         messages.error(request, "該商店已截止")
         print(f'商店 {product.shop.name} 不在開放期間，無法加入購物車')
         return redirect('shop', shop_id=product.shop.id)
