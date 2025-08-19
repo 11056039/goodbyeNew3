@@ -1,6 +1,6 @@
 from django.urls import path
 from goodBuy_want.views import *
-from goodBuy_want.test import *
+# from goodBuy_want.test import *
 
 from django.conf import settings
 from django.conf.urls.static import static
