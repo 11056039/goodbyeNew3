@@ -105,6 +105,7 @@ def order_detail(request, order):
                                                 'payment':payments,
                                                 'deposit_amount':deposit_amount,
                                                 'tail_amount':tail_amount})
+
 # -------------------------
 # 待付款&付款記錄顯示 - 僅買家
 # -------------------------
@@ -123,6 +124,7 @@ def my_payment_records(request):
                                                     'confirmed': confirmed,
                                                     'returned': returned,
                                                     'overdue': overdue})
+
 # -------------------------
 # 多帶進行中 - 買家
 # -------------------------
@@ -139,6 +141,7 @@ def my_rush_shops(request):
     shops = shopInformation_many(Shop.objects.filter(id__in=shop_ids))
 
     return render(request, 'my_rush_shops.html', {'shops': shops})
+
 # -------------------------
 # 多帶進行中 - 買家 - 單一
 # -------------------------
@@ -174,6 +177,7 @@ def my_rush_status_in_intent(request, shop, intent):
                                                             'total_price': total_price,
                                                             'target_summary': target_summary
                                                             })
+
 # -------------------------
 # 多帶進行中 - 購買優先表格
 # -------------------------

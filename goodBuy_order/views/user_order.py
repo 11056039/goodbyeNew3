@@ -22,144 +22,6 @@ PAYMENT_NAME_TO_CHOICE = {
 # -------------------------
 # 商品下單
 # -------------------------
-'''
-@login_required(login_url='login')
-def checkout(request):
-    cart_ids = request.POST.getlist('cart_ids') if request.method == 'POST' else []
-    product_id = request.GET.get('product_id')
-    quantity = int(request.GET.get('quantity', 1))
-
-    shop_groups = defaultdict(list)
-    cart_items = []
-    single_product = None
-
-    # 單品快速下單（來源為 GET）
-    if product_id:
-        product = get_object_or_404(Product, id=product_id, is_delete=False)
-        shop = product.shop
-        shop_groups[shop].append({'product': product, 'quantity': quantity})
-        single_product = product
-
-    # 購物車下單（來源為 POST）
-    elif cart_ids:
-        cart_items = Cart.objects.select_related('product__shop').filter(id__in=cart_ids, user=request.user)
-        if not cart_items:
-            messages.error(request, '購物車資料無效')
-            return redirect('cart')
-
-        for item in cart_items:
-            product = item.product
-            shop_groups[product.shop].append({'product': product, 'quantity': item.amount})
-
-    else:
-        messages.error(request, '無有效商品')
-        return redirect('cart')
-
-    orders_created = []
-    if request.method == 'POST' and 'checkout_submit' in request.POST:
-        # 為每間 shop 處理一次下單流程
-        for shop, items in shop_groups.items():
-            if shop.is_end:
-                messages.error(request, f'{shop.name} 商店已結束營業')
-                continue
-
-            form = OrderForm(request.POST, user=request.user, shop=shop)
-            if not form.is_valid():
-                messages.error(request, f'{shop.name} 的表單驗證失敗')
-                continue
-
-            address = form.cleaned_data['address']
-            payment_method = form.cleaned_data['payment_method']
-            payment_mode = form.cleaned_data.get('payment_mode')
-
-            # 搶購流程
-            if shop.purchase_priority_id != 1:
-                shop = maybe_extend_rush(shop)
-                intent, _ = PurchaseIntent.objects.get_or_create(user=request.user, shop=shop)
-
-                for item in items:
-                    product = item['product']
-                    qty = item['quantity']
-                    intent_product, created = IntentProduct.objects.get_or_create(intent=intent, product=product)
-
-                    current_total = IntentProduct.objects.filter(product=product).exclude(id=intent_product.id).aggregate(
-                        total=Sum('quantity')
-                    )['total'] or 0
-                    available_qty = max(product.stock - current_total, 0)
-
-                    if created:
-                        intent_product.quantity = min(qty, available_qty)
-                    else:
-                        intent_product.quantity = min(intent_product.quantity + qty, available_qty)
-
-                    intent_product.save()
-
-                    if qty > available_qty:
-                        messages.warning(request, f'{product.name} 庫存不足，已調整為 {available_qty} 件')
-
-                messages.success(request, f'{shop.name} 多帶商品已加入')
-                continue
-
-            # 一般建立訂單流程
-            try:
-                with transaction.atomic():
-                    total = 0
-                    locked_products = []
-
-                    for item in items:
-                        product = Product.objects.select_for_update().get(id=item['product'].id)
-                        qty = item['quantity']
-                        if product.stock < qty:
-                            raise Exception(f'{product.name} 庫存不足')
-                        product.stock = F('stock') - qty
-                        product.save()
-                        total += product.price * qty
-                        locked_products.append((product, qty))
-
-                    if payment_method == 'cash_on_delivery':
-                        pay_state = 1
-                        payment_mode = 'full'
-                    else:
-                        pay_state = 2 if payment_mode == 'deposit' else 8
-
-                    order = Order.objects.create(
-                        user=request.user,
-                        shop=shop,
-                        total=total,
-                        address=address,
-                        payment_category=payment_method,
-                        payment_mode=payment_mode,
-                        pay_state_id=PayState.objects.get(id=pay_state),
-                        order_state_id=1,
-                        second_supplement=0,
-                        pay=None
-                    )
-
-                    for product, qty in locked_products:
-                        ProductOrder.objects.create(order=order, product=product, amount=qty)
-
-                    orders_created.append(order)
-                    messages.success(request, f'{shop.name} 訂單已建立')
-            except Exception as e:
-                messages.error(request, f'{shop.name} 下單失敗：{e}')
-
-        # 清除購物車項目
-        if cart_items:
-            cart_items.delete()
-
-        if orders_created:
-            return redirect('order_list')
-
-    # 顯示頁面（GET）
-    form_by_shop = {shop: OrderForm(user=request.user, shop=shop) for shop in shop_groups}
-
-    return render(request, 'checkout.html', {
-        'shop_groups': shop_groups,
-        'form_by_shop': form_by_shop,
-        'single_product': single_product,
-    })
-'''
-
 @login_required(login_url='login')
 def checkout_step1(request):
     cart_ids = request.POST.getlist('cart_ids') if request.method == 'POST' else []
@@ -181,7 +43,7 @@ def checkout_step1(request):
             messages.error(request, f'{product.shop.name} 商店已下架')
             print(f'{product.shop.name} 商店已下架')
             return redirect('cart')
-        if not product.shop.is_active:
+        if not product.shop.can_order:
             messages.error(request, f'{product.shop.name} 商店尚未開啟或已結束')
             print(f'{product.shop.name} 商店尚未開啟或已結束')
             return redirect('cart')
@@ -201,7 +63,7 @@ def checkout_step1(request):
             if item.product.shop.permission_id != 1:
                 messages.error(request, f'{item.product.shop.name} 商店已下架')
                 print(f'{item.product.shop.name} 商店已下架')
-            if not item.product.shop.is_active:
+            if not item.product.shop.can_order:
                 messages.error(request, f'{item.product.shop.name} 商店尚未開啟或已結束')
                 print(f'{item.product.shop.name} 商店尚未開啟或已結束')
                 return redirect('cart')
