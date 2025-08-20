@@ -69,7 +69,22 @@ class RegisterForm(forms.ModelForm):
 
         # username 可留空 -> 用 email 前綴
         if not u and email:
-            cleaned["username"] = email.split("@")[0]
+            base = email.split("@")[0][:140]
+            candidate = base
+            i = 1
+            # 防撞名：username 最長 150
+            while User.objects.filter(username=candidate).exists():
+                suffix = str(i)
+                candidate = (base[:150-len(suffix)] if len(base) + len(suffix) > 150 else base) + suffix
+                i += 1
+            cleaned["username"] = candidate
+
+        else:
+            # 有填 username → 檢查唯一
+            if u and User.objects.filter(username=u).exists():
+                self.add_error("username", "該用戶名已被使用")
+            cleaned["username"] = u  # 帶回 strip 後的值
+
 
         if u and User.objects.filter(username=u).exists():
             self.add_error("username", "該用戶名已被使用")
@@ -131,3 +146,10 @@ class AddressForm(forms.Form):
     phone = forms.CharField(required=False)
     city = forms.ChoiceField(required=False, choices=UserAddress.ADDRESS_MODE_CHOICES)
     address = forms.CharField(required=False)
+    
+    #驗證電話號碼 不知道目前需不需要
+    # def clean_phone(self):
+    #     phone = (self.cleaned_data.get("phone") or "").strip()
+    #     if phone and not re.match(r"^09\d{8}$", phone):
+    #         raise forms.ValidationError("手機格式需為 09 開頭共 10 碼")
+    #     return phone
