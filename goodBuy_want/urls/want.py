@@ -15,7 +15,7 @@ urlpatterns = [
 
     path('search/', wantBySearch, name='want_search'),
     path('search/user/<int:user_id>/', wantBySearch, name='want_search_by_user'),
-
+    
 
     # path('<int:want_id>/test-reply/', test_choose_shop_reply_api, name='test_choose_shop_reply_api'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
