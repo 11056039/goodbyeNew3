@@ -8,7 +8,7 @@ from ..utils import *
 from utils import *
 
 from ..models import *
-from goodBuy_want.form import ChooseShopToReplyForm
+from goodBuy_want.forms import ChooseShopToReplyForm
 from goodBuy_want.views.want_query import *
 from goodBuy_web.models import *
 

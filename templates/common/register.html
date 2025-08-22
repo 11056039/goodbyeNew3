@@ -18,7 +18,7 @@
             {% csrf_token %}
     
             <div class="mb-3">
-                <input type="text" class="form-control" name="username" placeholder="用戶名稱（如未填則以email前面名稱）">
+                <input type="text" class="form-control" name="username" placeholder="用戶名稱（如未填則以email前面名稱作為用戶名稱）">
                 {% include "common/field_error.html" with field=form.username %}
             </div>
 
