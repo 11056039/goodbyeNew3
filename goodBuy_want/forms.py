@@ -7,7 +7,7 @@ from goodBuy_shop.models import Permission, Shop
 from django.db.models import Q
 from django.utils import timezone
 from goodBuy_want.models import WantBack, Want
-
+from django.db.models import Min, Max
 class MultipleClearableFileInput(ClearableFileInput):
     allow_multiple_selected = True
 
@@ -100,6 +100,7 @@ class ChooseShopToReplyForm(forms.Form):
         ).values_list('shop_id', flat=True)
 
         now = timezone.now()
+        
         qs = Shop.objects.filter(
             owner=user,
             permission__id__in=[1, 2],
@@ -109,7 +110,12 @@ class ChooseShopToReplyForm(forms.Form):
             id__in=replied_shop_ids
         ).order_by('-update')
 
-        self.fields['shop'].queryset = qs
+        annotated_qs = qs.annotate(
+            price_min=Min('product__price'),
+            price_max=Max('product__price'),
+        )
+
+        self.fields['shop'].queryset = annotated_qs
 
     def clean_shop(self):
         shop = self.cleaned_data['shop']
