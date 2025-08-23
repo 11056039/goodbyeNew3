@@ -37,7 +37,8 @@
                     </div>
                     <div class="form-group grid-align">
                         <label for="nickname">暱稱：</label>
-                        <input type="text" name="nickname" id="nickname" value="{{ request.user.profile.nickname }}">
+                        <input type="text" name="nickname" id="nickname" value="{{ request.user.profile.nickname|default:'' }}">
+
                     </div>
                     <div class="form-group grid-align">
                         <label for="email">電子郵件：</label>
@@ -46,7 +47,7 @@
                     </div>
                     <div class="form-group grid-align">
                         <label for="bio">自我介紹：</label>
-                        <textarea name="bio" id="bio" rows="5">{{ request.user.profile.bio }}</textarea>
+                        <textarea name="bio" id="bio" rows="5">{{ request.user.profile.bio|default:''  }}</textarea>
                     </div>
                 </div>
             </div>

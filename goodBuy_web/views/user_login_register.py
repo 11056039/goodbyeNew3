@@ -173,8 +173,7 @@ def editProfile(request):
             address.save()
 
         messages.success(request, "已更新個人資料")
-        next_url = request.GET.get("next") or request.POST.get("next") or reverse("home")
-        return redirect(next_url)
+        return redirect("editprofile")
 
     # 第一次進來
     user_form = UserBasicForm(initial=initial_user, user=user)
