@@ -118,19 +118,19 @@ body {
 
 /* --- 區塊標題 --- */
 .profile-section-title {
-    margin:10px 0 14px 0;
+    margin:0px 0 14px 0;
     font-weight: bold;
     font-size: 1.18rem;
     color: #264653;
     border-bottom: 2px solid #dedede;
     padding-bottom: 2px;
-    margin-left: -100px !important; 
+    
     
 }
 
 /* --- 卡片區 --- */
 .profile-card-list {
-    margin-bottom: 24px;
+    margin-bottom: 0px;
     margin-left: -100px !important; 
 }
 
@@ -238,3 +238,14 @@ body {
     row-gap: 8px;
   }
 }
+.bl-popover{
+  position: fixed;
+  z-index: 3000;
+  min-width: 180px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.14);
+}
+#profile-header, .profile-header{ cursor: pointer; } /* 提示可點 */
