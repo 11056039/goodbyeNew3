@@ -145,7 +145,7 @@
                         <p><strong>開始時間：</strong>{{ shop.start_time|date:"Y/m/d" }}</p>
                         
                         <!-- 截止時間 -->
-                        {% if shop.end_time.year >= 2099 %}
+                        {% if not shop.end_time or shop.end_time.year >= 2099 %}
                             <p><strong>結束時間：</strong>無截止</p>
                         {% else %}
                             <p><strong>結束時間：</strong>{{ shop.end_time|date:"Y/m/d" }}</p>
