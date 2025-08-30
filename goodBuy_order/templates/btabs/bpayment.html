@@ -6,11 +6,11 @@
           <h5 class="card-title">訂單編號：{{ item.order.id }}</h5>
           <p class="mb-1"><strong>商品：</strong>{{ item.order.product.name }}</p>
           <p class="mb-1"><strong>金額：</strong>${{ item.amount }}</p>
-          <a href="{% url 'make_payment' item.id %}" class="btn btn-success">去付款</a>
+          <a href="{% url 'upload_payment' item.id %}" class="btn btn-success">去付款</a>
         </div>
       </div>
     {% endfor %}
   </div>
 {% else %}
-  <p>目前沒有待付款的訂單。</p>
+  <div class="alert alert-info">目前沒有待付款的訂單。</div>
 {% endif %}

@@ -1,6 +1,8 @@
 from django.urls import path
 from goodBuy_order.views import *
 
+
+
 urlpatterns = [
     path('checkout/', checkout_step1, name='checkout'),
     path('checkout/address_payment', checkout_step2, name='checkout_address_payment'),

@@ -1,41 +1,46 @@
+{% load static %}
 {% if shipping_orders %}
-  <div class="shipping-list mb-4">
-    <h5>待出貨訂單</h5>
+  <div class="order-container">
     {% for item in shipping_orders %}
-      <div class="shipping-item p-3 mb-3 border rounded">
-        <div>訂單編號：{{ item.order.id }}</div>
-        <div>商品名稱：{{ item.product.name }}</div>
-        <div>數量：{{ item.quantity }}</div>
-        <div>買家：{{ item.order.user.username }}</div>
-        <div>出貨狀態：{{ item.order.order_state.name }}</div>
-        
-        <!-- 出貨完成按鈕 -->
-        <form method="post" action="{% url 'seller_action' item.id %} style="display:inline-block;">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-primary btn-sm">出貨</button>
-        </form>
+      <div class="order-card p-3 mb-3 border rounded shadow-sm">
+        <!-- 左上角買家 -->
+        <div class="order-header mb-2">
+          <strong>買家：{{ item.order.user.username }}</strong>
+        </div>
+        <!-- 灰線 -->
+        <div class="order-divider mb-2"></div>
+
+        <!-- 商品明細 -->
+        <div class="order-content">
+          <div class="d-flex align-items-center mb-2">
+            <!-- 商品圖片 -->
+            <div class="me-3">
+              {% if item.product.img %}
+                <img src="{{ item.product.img.url }}" class="product-img" alt="{{ item.product.name }}">
+              {% else %}
+                <img src="{% static 'images/no_image.png' %}" class="product-img" alt="No image">
+              {% endif %}
+            </div>
+            <!-- 商品資訊 -->
+            <div class="d-flex align-items-center flex-grow-1 justify-content-center custom-gap">
+              <p class="mb-0">{{ item.product.name }}</p>
+              <p class="mb-0">{{ item.quantity }}</p>
+              <p class="mb-0">{{ item.order.order_state.name }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 出貨操作按鈕靠右 -->
+        <div class="order-actions mt-3 d-flex justify-content-end">
+          <form method="post" action="{% url 'seller_action' item.order.id %}" class="d-inline">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="ship_order">
+            <button type="submit" class="btn btn-primary btn-sm">出貨</button>
+          </form>
+        </div>
       </div>
     {% endfor %}
   </div>
 {% else %}
-  <p>目前沒有待出貨的訂單。</p>
-{% endif %}
-
-<hr>
-
-{% if shipped_orders %}
-  <div class="shipped-list">
-    <h5>已出貨訂單</h5>
-    {% for item in shipped_orders %}
-      <div class="shipped-item p-3 mb-3 border rounded bg-light">
-        <div>訂單編號：{{ item.order.id }}</div>
-        <div>商品名稱：{{ item.product.name }}</div>
-        <div>數量：{{ item.quantity }}</div>
-        <div>買家：{{ item.order.user.username }}</div>
-        <div>出貨時間：{{ item.order.updated_at }}</div>
-      </div>
-    {% endfor %}
-  </div>
-{% else %}
-  <p>目前沒有已出貨的訂單。</p>
+  <div class="alert alert-info">目前沒有待出貨的訂單。</div>
 {% endif %}

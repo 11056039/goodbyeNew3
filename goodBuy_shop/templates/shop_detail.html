@@ -100,7 +100,9 @@
                                                 <div class="text-muted no-image-placeholder">暫無圖片</div>
                                             {% endif %}
                                         </div>
-                                        <div class="col">{{ product.name }}</div>
+                                        <div class="col d-flex product-name-wrapper">
+                                            <span class="product-name">{{ product.name }}</span>
+                                        </div>
                                         <div class="col-md-4 text-danger">{{ product.price }}$</div>
                                         <div class="col-md-4">庫存：{{ product.remaining_quantity }}</div>
                                         <div class="col d-flex justify-content-end">

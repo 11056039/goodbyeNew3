@@ -394,3 +394,8 @@ input[type="number"] {
     display: block;
 }
 
+.product-name {
+    min-width: 200px;    /* 最小寬度 */
+    white-space: normal;  /* 允許換行 */
+    word-break: break-word; /* 必要時斷行 */
+}

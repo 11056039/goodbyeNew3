@@ -22,8 +22,6 @@
                 <img src="{% static 'images/no_image.png' %}" class="product-img" alt="No image">
               {% endif %}
             </div>
-
-
             <!-- 中間數量 + 金額 -->
             <div class="d-flex align-items-center flex-grow-1 justify-content-center custom-gap">
               <p class="mb-0">{{ item.shop.name }}</p>
@@ -41,6 +39,16 @@
           總金額：<span class="money">{{ item.total }}$</span>
         </div>
 
+        <!-- 付款方式提示 -->
+        <div class="text-end text-secondary small">
+          付款方式：
+          {% if item.payment_category == 'cash_on_delivery' %}
+            取貨付款
+          {% else %}
+            需上傳付款證明
+          {% endif %}
+        </div>
+
         <!-- 接單操作按鈕靠右 -->
         <div class="order-actions mt-3 d-flex justify-content-end">
           <form method="post" action="{% url 'seller_action' item.id %}" class="me-2 d-inline">
@@ -48,7 +56,6 @@
             <input type="hidden" name="action" value="confirm_order">
             <button type="submit" class="btn btn-success btn-sm">確認接單</button>
           </form>
-
           <form method="post" action="{% url 'seller_action' item.id %}" class="d-inline">
             {% csrf_token %}
             <input type="hidden" name="action" value="reject_stock">
