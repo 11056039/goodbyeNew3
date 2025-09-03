@@ -10,6 +10,7 @@ urlpatterns = [
     # 共同頁面
     path('', include('goodBuy_web.urls')),
     path('user/', include('goodBuy_web.urls.user')),
+    path('user/', include('goodBuy_order.urls.user')),#改了這行不行就刪
 
     path('shop/', include('goodBuy_shop.urls.shop')),
     path('shop/action/', include('goodBuy_shop.urls.shop_action')),
