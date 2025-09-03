@@ -181,12 +181,13 @@ def check_order_buyer(redirect_to='home'):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, order, *args, **kwargs):
-            if order.user != request.user:
+            if getattr(order, 'user_id', None) != getattr(request.user, 'id', None):
                 messages.error(request, '您無權操作此訂單')
                 return redirect(redirect_to)
             return view_func(request, order, *args, **kwargs)
         return _wrapped_view
     return decorator
+
 # -------------------------
 # 訂單是否為賣家商店的檢查
 # -------------------------

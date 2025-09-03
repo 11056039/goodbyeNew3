@@ -147,9 +147,13 @@ order_payment_owner_required = object_owner_required(
 # -------------------------
 # 訂單為購買者擁有檢查
 # -------------------------
-def order_buyer_required(redirect_to='home'):
-    return lambda view_func: \
-        order_exists_required(check_order_buyer(redirect_to=redirect_to)(view_func))
+def order_buyer_required(view_func=None, *, redirect_to='home'):
+    def _decorator(vf):
+        return order_exists_required(check_order_buyer(redirect_to=redirect_to)(vf))
+
+    if callable(view_func):
+        return _decorator(view_func)
+    return _decorator
 # -------------------------
 # 訂單為賣家擁有檢查
 # -------------------------
