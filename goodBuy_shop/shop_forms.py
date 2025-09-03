@@ -102,20 +102,35 @@ class ShopForm(forms.ModelForm):
     def clean(self):
         cleaned = super().clean()
 
-        # --- 1) 商店名稱不可為空（去空白）
+        # --- 商店名稱不可為空（去空白）
         name = cleaned.get('name')
         if name is None or not str(name).strip():
             self.add_error('name', '商店名稱不可為空（不得全為空白）。')
         else:
             cleaned['name'] = str(name).strip()
 
-        # --- 2) 至少選一種支援的付款方式
+        # --- 至少選一種支援的付款方式
         payment_qs = cleaned.get('payment_ids')
-        # ModelMultipleChoiceField 回來是 queryset-like；用 exists() / len 檢查都可
         if not payment_qs or payment_qs.count() == 0:
             self.add_error('payment_ids', '請至少選擇一種支援的付款方式。')
 
-        # --- 3) 金額/數量優先 ⇒ 必須有結單時間；且 end > start
+        # === 啟用定金時，不得只接受取貨付款 ===
+        deposit_enabled = cleaned.get('deposit')
+        if deposit_enabled and payment_qs and payment_qs.count() > 0:
+            # 取付款（COD）的辨識（以 PaymentAccount.payment.name 判斷）
+            def _is_cod(pa):
+                name = (getattr(getattr(pa, 'payment', None), 'name', '') or '').strip().casefold()
+                # 覆蓋常見寫法
+                return name in {'取貨付款', '貨到付款'} or name == 'cod'
+
+            has_non_cod = any(not _is_cod(pa) for pa in payment_qs)
+            if not has_non_cod:
+                self.add_error(
+                    'payment_ids',
+                    '已啟用定金模式：請至少再勾選一種「非取貨付款」的方式（如任一銀行/轉帳帳號）。'
+                )
+
+        # --- 金額/數量優先 ⇒ 必須有結單時間；且 end > start
         start_time = cleaned.get('start_time')
         end_time   = cleaned.get('end_time')
         priority   = cleaned.get('purchase_priority')
@@ -123,7 +138,7 @@ class ShopForm(forms.ModelForm):
         def _priority_value(p):
             if p is None:
                 return None
-            return getattr(p, 'id', p)  # 外鍵用 p.id，整數用 p
+            return getattr(p, 'id', p)
 
         pval = _priority_value(priority)
 
