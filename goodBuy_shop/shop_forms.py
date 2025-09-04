@@ -23,12 +23,12 @@ class ShopForm(forms.ModelForm):
     )
 
     start_time = forms.DateTimeField(
-        input_formats=['%Y-%m-%d %H:%M'],
+        input_formats=['%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M'],
         widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
         required=False
     )
     end_time = forms.DateTimeField(
-        input_formats=['%Y-%m-%d %H:%M'],
+        input_formats=['%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M'],
         widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
         required=False
     )
