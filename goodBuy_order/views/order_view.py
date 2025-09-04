@@ -70,7 +70,14 @@ def order_list(request, role='buyer'):
                 messages.warning(request, "無效的狀態參數")
                 title = "全部"
 
-    
+    orders_all = orders.order_by('-date')  # 全部訂單
+    orders_choose_payment = orders.filter(order_state_id=1).order_by('-date')  # 待選付款
+    orders_wait_seller    = orders.filter(order_state_id=2).order_by('-date')  # 待賣家確認（可取消）
+    orders_need_payment = orders.filter(order_state_id=3).order_by('-date')  # 待付款（銀行轉帳）
+    orders_waitship       = orders.filter(order_state_id=4).order_by('-date')  # 待出貨
+    orders_to_receive     = orders.filter(order_state_id=5).order_by('-date')  # 已出貨待收貨
+    orders_completed      = orders.filter(order_state_id=6).order_by('-date')  # 已完成
+    orders_cancelled      = orders.filter(order_state_id__in=[7, 8, 9, 10]).order_by('-date')  # 未成立
 
     ctx_common = {
         "title": title,
@@ -80,28 +87,27 @@ def order_list(request, role='buyer'):
     }
 
     if role == 'buyer':
-        orders_choose_payment = orders.filter(order_state_id__in=[1, 3])  # 待選付款+待付款（上傳匯款）
-        orders_wait_seller    = orders.filter(order_state_id=2)  # 待賣家確認（可取消）
-        orders_waitship       = orders.filter(order_state_id=4)  # 待出貨
-        orders_to_receive     = orders.filter(order_state_id=5)  # 已出貨待收貨
-
         ctx_common.update({
+            "orders_all":            orders_all,
             "orders_choose_payment": orders_choose_payment,
+            "order_need_payment":  orders_need_payment,
             "orders_wait_seller":    orders_wait_seller,
             "orders_waitship":       orders_waitship,
             "orders_to_receive":     orders_to_receive,
+            "orders_completed":      orders_completed,
+            "orders_cancelled":      orders_cancelled,
         })
         return render(request, "buyer.html", ctx_common)
     
     else:  # seller
-        orders_pending  = orders.filter(order_state_id=2)  # 待賣家確認
-        orders_waitpay  = orders.filter(order_state_id__in=[1, 3])  # 待付款（銀行）
-        orders_waitship = orders.filter(order_state_id=4)  # 待出貨
-        
         ctx_common.update({
-            "orders_pending":  orders_pending,
-            "orders_waitpay":  orders_waitpay,
-            "orders_waitship": orders_waitship,
+            "orders_all":            orders_all,
+            "order_need_payment":  orders_need_payment,
+            "orders_wait_seller":    orders_wait_seller,
+            "orders_waitship":       orders_waitship,
+            "orders_to_receive":     orders_to_receive,
+            "orders_completed":      orders_completed,
+            "orders_cancelled":      orders_cancelled,
         })
         return render(request, "seller.html", ctx_common)
 
