@@ -103,9 +103,9 @@ class ChooseShopToReplyForm(forms.Form):
         
         qs = Shop.objects.filter(
             owner=user,
-            permission__id__in=[1, 2],
+            permission__id=1,
         ).filter(
-            Q(end_time__isnull=True) | Q(end_time__gt=now)   # ✅ 未設定截止 或 尚未截止
+            Q(end_time__isnull=True) | Q(end_time__gt=now)   # 未設定截止 或 尚未截止
         ).exclude(
             id__in=replied_shop_ids
         ).order_by('-update')
