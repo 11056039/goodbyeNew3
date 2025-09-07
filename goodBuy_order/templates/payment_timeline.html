@@ -13,19 +13,23 @@
 
   <!-- 頁首：標題 + 月份 pill -->
   <!-- 頁首：標題 + 年/月下拉 -->
+<!-- 第一行：只有標題 -->
 <div class="gb-ledger__top">
   <h1 class="gb-ledger__title">記帳本</h1>
+</div>
 
-  <!-- 直接用 GET 送出 year / month -->
+<!-- 第二行：搜尋 + 年/月下拉（換到新的一行） -->
+<div class="gb-toolbar">
+
+
+  <!-- 右側：年份 / 月份選擇（用 GET 提交） -->
   <form id="filterForm" method="get" class="gb-month">
-    <!-- 年份：提供 year-2、year-1、year 三個選項 -->
     <select name="year" class="gb-select" onchange="this.form.submit()">
       <option value="{{ year|add:'-2' }}" {% if year|add:'-2' == year %}selected{% endif %}>{{ year|add:"-2" }}年</option>
       <option value="{{ year|add:'-1' }}" {% if year|add:'-1' == year %}selected{% endif %}>{{ year|add:"-1" }}年</option>
       <option value="{{ year }}" selected>{{ year }}年</option>
     </select>
 
-    <!-- 月份：1~12 直接列出 -->
     <select name="month" class="gb-select" onchange="this.form.submit()">
       <option value="1"  {% if month == 1  %}selected{% endif %}>1月</option>
       <option value="2"  {% if month == 2  %}selected{% endif %}>2月</option>
@@ -42,6 +46,7 @@
     </select>
   </form>
 </div>
+
 
 
 
