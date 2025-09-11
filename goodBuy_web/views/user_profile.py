@@ -90,7 +90,7 @@ def view_profile(request, user):
         want.status = want.permission.name if hasattr(want, 'permission') else ''
 
     # ---------- 信譽度 & 基本統計 ----------
-    average_rank = profile_user.average_rank if profile_user.average_rank else '無評價'
+    # average_rank = profile_user.average_rank if profile_user.average_rank else '無評價'
     fans_count = getattr(profile_user, "fans_count", 0)
     shop_count = user_shops.count()
     buy_count = getattr(profile_user, "buy_count", 0)
@@ -99,7 +99,7 @@ def view_profile(request, user):
         'profile_user': profile_user,
         'user_shops': user_shops,
         'user_wants': user_wants,
-        'average_rank': average_rank,
+        #'average_rank': average_rank,
         'fans_count': fans_count,
         'shop_count': shop_count,
         'buy_count': buy_count,
