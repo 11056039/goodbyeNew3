@@ -58,6 +58,9 @@ def order_list(request, role='buyer'):
         has_returned = Exists(
             OrderPayment.objects.filter(order=OuterRef('pk'), seller_state='returned')
         ),
+        # 訂單是否已評論
+        has_commented_by_me= Exists(
+            Comment.objects.filter(order=OuterRef('pk'), user=request.user)),
     )
 
     orders_all = orders.order_by('-date')
@@ -153,12 +156,13 @@ def order_detail(request, order):
         deposit_ratio = order.shop.deposit_ratio or 50
         deposit_amount = order.total * deposit_ratio // 100
         tail_amount = (order.total - deposit_amount) + (order.second_supplement or 0)
-
+        
+    # 判斷是否已評論過
     return render(request, 'order_detail.html', {'order':order,
                                                 'product_orders': product_orders, 
                                                 'payment':payments,
                                                 'deposit_amount':deposit_amount,
-                                                'tail_amount':tail_amount})
+                                                'tail_amount':tail_amount,})
 
 # -------------------------
 # 待付款&付款記錄顯示 - 僅買家
