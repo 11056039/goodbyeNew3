@@ -55,7 +55,7 @@
           </div>
           <div class="mt-2 text-end">
 
-            {% if user.order.comment %}
+            {% if order.has_commented_by_me %}
                 <!-- 已經評論過 -->
                 <button class="btn2 btn-secondary" disabled>評論完成</button>
             {% else %}
