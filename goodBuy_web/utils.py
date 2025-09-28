@@ -6,17 +6,6 @@ from django.shortcuts import *
 
 from .models import *
 
-def user_exists_required(view_func):
-    @wraps(view_func)
-    def _wrapped_view(request, user_id, *args, **kwargs):
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            messages.error(request, "找不到使用者呢")
-            return redirect('home')
-        return view_func(request, user, *args, **kwargs)
-    return _wrapped_view
-
 def get_blocked_user_ids(user):
     if not user or not user.is_authenticated:
         return []

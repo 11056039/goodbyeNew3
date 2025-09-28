@@ -4,11 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import *
 
 from ..models import *
-from goodBuy_shop.models import Permission
 from goodBuy_web.models import SearchHistory
 
 from goodBuy_shop.models import *
-from goodBuy_shop.shop_utils import shopInformation_many
 
 from ..want_utils import *
 from utils import *
@@ -62,7 +60,7 @@ def wantByUserId_many(request, user):
 # 收物帖查詢 - want_id + # 查看被回覆的收物帖
 # -------------------------
 @want_exists_required
-@blacklist_check(lambda want: want.user, msg='你已被此使用者封鎖，無法查看', context_name='want')
+@blacklist_check(lambda want: want.user, msg='你已被此賣家封鎖', context_name='want')
 def wantById_one(request, want):
     record_want_click(request, want)
 
