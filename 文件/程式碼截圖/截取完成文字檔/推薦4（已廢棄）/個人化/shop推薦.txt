@@ -1,24 +1,37 @@
-目的：產生「個人化商店推薦」清單。對候選商店蒐集多種使用者訊號（搜尋、瀏覽、曾下單、新店更新），以加權相加＋乘法倍率得到原始分數，加入抖動提升多樣性，並以Softmax 機率抽樣（含探索比例）與同擁有者上限做多樣性控制；支援 owner 模式（只看某位賣家所有商店內的推薦）。
+目的：
+產生「個人化商店推薦」清單。綜合使用者訊號（搜尋、瀏覽、成交、近期更新、最近是否被推薦），以加權相加（部分項目為倍率縮放）得到原始分數；加入抖動提升多樣性；以 Softmax 機率抽樣 + 探索名額保底 與同擁有者上限控制多樣性。支援 owner 模式（只在指定賣家的商店內做排序）。
+
 
 作法
-候選集：依 owner/keyword/tag 與可見性過濾，排除黑名單與自己店；首頁可套 cooldown_days 排除近期已推店。
+候選集：
+依 owner / keyword / tag / 可見性(permission) 篩選；排除黑名單與自己的店（登入時用 owner_id=user.id 比對）。
+非 owner 模式：僅推「進行中或近 NEW_DAYS 有更新」。
+首頁流（無 keyword/owner/tag）可套 cooldown_days 排除最近 N 日已推商店；若全被清空，放寬（先縮短窗，再局部放回）
+
 
 打分：
-搜尋匹配：(tags+name+introduce) 命中 × PERSONAL_WEIGHTS['search_keyword']。
-看過相關店：(name+introduce) × viewed_related_multiplier（乘法縮放）。
-曾下單店：tags × traded_shop_bonus。
-新店/近期更新：常數加分 new_shop_bonus（NEW_DAYS 內）。
-抖動：對每間店加上 [-jitter, +jitter] 的可重現亂數。
+搜尋匹配：若 kw 命中 (tags + name + introduce)，加
+kw_score = (KEYWORD_SCORES['name'] + KEYWORD_SCORES['introduce'] + KEYWORD_SCORES['tags']) × PERSONAL_WEIGHTS['search_keyword']
+看過相關：若近 VIEW_DAYS 有瀏覽，加
+(KEYWORD_SCORES['name'] + KEYWORD_SCORES['introduce']) × PERSONAL_WEIGHTS['viewed_related_multiplier']
+曾下單：若近 ORDER_DAYS 有成交，加
+KEYWORD_SCORES['tags'] × PERSONAL_WEIGHTS['traded_shop_bonus']
+新店/近期更新：若近 NEW_DAYS 有更新，加
+PERSONAL_WEIGHTS['new_shop_bonus']
+新穎加分：若「未看過、未成交、且近 RECENT_RECO_DAYS 未被推薦」，再加
+novelty_bonus = PERSONAL_WEIGHTS['new_shop_bonus']（沿用既有參數即可）
+（可選）近期已推薦降權：若 RECOMMENDED_SHOP_WEIGHT_MULTIPLIER < 1.0，則
+score *= RECOMMENDED_SHOP_WEIGHT_MULTIPLIER（僅在未啟用 cooldown 時生效）
+抖動：對每間店加 U[-jitter, +jitter]，使用
+seed = f"{who}-{now.strftime(fmt)}"（fmt 支援 minute/hour/day/none；「分鐘」顆粒度較活）
+
 
 排序/抽樣：先依分數降序得 prelim →（非 owner 模式）限制同 owner 最多 5 家 → 取前 200 做 Softmax(T=0.7) 機率抽樣（epsilon-greedy 混入 explore_ratio 均勻探索），不重複抽出limit；不足則用熱門補齊。
 
-輸出/記錄：保序查詢回傳並寫入 ShopRecommendationHistory(source='personalized', algorithm_version='v3')保存推薦記錄
-
-
-
-！！輸入參數在推薦參數內！！
-！！shop want共用 ！！
-
+輸出/記錄：
+依抽樣順序組成 QuerySet（用 Case/When 保序）。
+僅首頁流寫入 ShopRecommendationHistory(source='personalized', algorithm_version='v3')，避免在 owner/搜尋頁面汙染冷卻。
+測試模式可停用冷卻與降權；正式上線建議 cooldown_days≈3 或 RECOMMENDED_SHOP_WEIGHT_MULTIPLIER≈0.5。
 
 
 
