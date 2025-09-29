@@ -24,8 +24,11 @@ owner 模式：只按分數排序，不做多樣性與抽樣。
 now = timezone.now()
 recent = now - timedelta(days=days)
 user = getattr(request, 'user', None)
-blocked_ids = set(get_blocked_user_ids(user)) if (user and user.is_authenticated) else set()
+is_auth = bool(user and getattr(user, "is_authenticated", False))
+blocked_ids = set(get_blocked_user_ids(user)) if is_auth else set()
 owner_mode = owner is not None
+is_homefeed = (not owner_mode) and (not keyword) and (not tag)  # 只首頁流寫歷史/套冷卻
+
 
 # 候選
 if owner_mode:
@@ -64,7 +67,7 @@ for row in (WantBack.objects
             .values('want_id').annotate(c=Count('id'))):
     scores[row['want_id']] += HOT_WEIGHTS.get('recent_replies', 0) * row['c']
 
-# 新貼加成（可選）
+# 新貼加成
 if HOT_WEIGHTS.get('new_want_bonus', 0):
     for wid in Want.objects.filter(id__in=scores.keys(),
                                    update__gte=now - timedelta(days=NEW_DAYS)
