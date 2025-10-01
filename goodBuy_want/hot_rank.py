@@ -276,7 +276,7 @@ def get_hot_wants(
         # 萬一還不夠，就用「最近更新」或「熱門排序」補滿
         if len(final_picks) < need:
             already = set(final_picks)
-            fallback = list(qs.exclude(id__in=already).order_by('-update', '-date').values_list('id', flat=True)[:(need - len(final_picks))])
+            fallback = list(qs.exclude(id__in=already).values_list('id', flat=True)[:(need - len(final_picks))])
             final_picks += fallback
             if len(final_picks) < need:
                 # 再保底：直接用分數排序補
