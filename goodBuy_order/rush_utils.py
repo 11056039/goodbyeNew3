@@ -124,7 +124,7 @@ def get_rush_summaries(shop, user=None):
 
         summaries.append(row)
 
-    # 排序（你的規則）
+    # 排序
     if shop.purchase_priority_id == 3:  # 數量優先
         summaries.sort(key=lambda s: (
             -int(s['total_quantity']),
@@ -156,7 +156,7 @@ def maybe_extend_rush(shop):
         if not locked.end_time:  # 沒有截止時間就不處理
             return locked
 
-        # 已經結算就不延（若你有此欄位）
+        # 已經結算就不延
         if getattr(locked, 'is_rush_settled', False):
             return locked
 
