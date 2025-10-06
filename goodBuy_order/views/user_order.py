@@ -224,7 +224,7 @@ def checkout_step1(request):
 
 @login_required(login_url='login')
 def checkout_step2(request):
-    print(request.POST)
+
     order_ids = request.session.get('pending_order_ids')
     if not order_ids:
         messages.error(request, '找不到待處理的訂單')
@@ -232,7 +232,7 @@ def checkout_step2(request):
 
     orders = (
         Order.objects
-        .filter(id__in=order_ids, user=request.user, pay_state_id=10)  # 10: 你原本的「待設定」狀態
+        .filter(id__in=order_ids, user=request.user, pay_state_id=10)
         .select_related('shop')
     )
     if not orders:
@@ -257,18 +257,30 @@ def checkout_step2(request):
 
     user_address = UserAddress.active.filter(user=request.user).first()
     addresses = UserAddress.objects.filter(user=request.user)
-    city_list = [c[0] for c in UserAddress.ADDRESS_MODE_CHOICES]
+    city_list = getattr(UserAddress, 'ADDRESS_MODE_CHOICES', [])
 
     if request.method == 'POST':
-        # 收件資料
-        receiver_name = request.POST.get('receiver_name', '').strip()
-        receiver_phone = request.POST.get('receiver_phone', '').strip()
-        receiver_city = request.POST.get('city', '').strip()
-        detail_address = request.POST.get('detail_address', '').strip()
+        # 收件資料（最小改動）
+        address_choice = request.POST.get('address_choice')  # 'new' 或 既有 address id
+        addr = None
 
-        if not all([receiver_name, receiver_phone, receiver_city, detail_address]):
-            messages.error(request, '請完整填寫寄送資訊')
-            return redirect('checkout_address_payment')
+        if addresses.exists() and address_choice and address_choice != 'new':
+            # 使用者選既有地址
+            try:
+                addr = addresses.get(pk=address_choice)
+            except UserAddress.DoesNotExist:
+                messages.error(request, '選擇的收件地址不存在')
+                return redirect('checkout_address_payment')
+        else:
+            # 沒有既有地址，或選擇新增 → 走原本新增流程
+            receiver_name = request.POST.get('receiver_name', '').strip()
+            receiver_phone = request.POST.get('receiver_phone', '').strip()  # 你原本用的是 receiver_phone
+            receiver_city = request.POST.get('city', '').strip()
+            detail_address = request.POST.get('detail_address', '').strip()
+
+            if not all([receiver_name, receiver_phone, receiver_city, detail_address]):
+                messages.error(request, '請完整填寫寄送資訊')
+                return redirect('checkout_address_payment')
 
         # 依唯一約束建立/重用地址 (user, phone, city, address)
         addr, created = UserAddress.objects.get_or_create(
@@ -278,11 +290,9 @@ def checkout_step2(request):
             address=detail_address,
             defaults={'name': receiver_name}
         )
-
         if not created and addr.name != receiver_name:
             addr.name = receiver_name
             addr.save(update_fields=['name'])
-
         # 逐張訂單設定付款與地址
         for o in orders:
             payments = allowed_payments.get(o.id, [])
@@ -345,6 +355,7 @@ def checkout_step2(request):
         'user_address': user_address,
         'city_list': city_list,
     })
+
 
 # -------------------------
 # 買家選擇付款方式
