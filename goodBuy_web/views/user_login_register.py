@@ -8,7 +8,7 @@ from django.contrib.auth import  authenticate,login,logout , update_session_auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from ..forms import *
+from goodBuy_web.forms import *
 
 #=============================
 # 登入
@@ -107,6 +107,8 @@ def editProfile(request):
 
     # 目前使用者預設地址（可能為 None）
     user_address = getattr(UserAddress, "active", UserAddress.objects).filter(user=user).first()
+    # 當前是否有設定實名
+    is_id_hash_missing = not bool(user.id_hash)
 
     # 初始值
     initial_user = {
@@ -121,9 +123,18 @@ def editProfile(request):
     }
 
     if request.method == "POST":
-        # 建立三張表單
+        # 建立四張表單
         user_form = UserBasicForm(request.POST, user=user)
         pwd_form  = ChangePasswordForm(request.POST, user=request.user)
+
+        if is_id_hash_missing:
+            # 首次填寫：只需 InitialIdHashForm
+            id_hash_form = InitialIdHashForm(request.POST, user=user)
+            id_hash_submitted = 'new_id_hash' in request.POST
+        else:
+            # 非首次填寫：使用 UpdateIdHashForm
+            id_hash_form = UpdateIdHashForm(request.POST, user=user) 
+            id_hash_submitted = any((request.POST.get(k) or "").strip() for k in ["old_id_hash", "new_id_hash"])
 
         # 把前端自定義欄位名稱映射成 AddressForm 需要的 name/phone/city/address
         data = request.POST.copy()
@@ -141,16 +152,23 @@ def editProfile(request):
         # 決定哪些表單需要驗證
         pwd_submitted = any((request.POST.get(k) or "").strip() for k in ["new_password", "confirm_password"])
         addr_submitted = any((data.get(k) or "").strip() for k in ["name", "phone", "city", "address"])
+        # 檢查身份證字段是否被提交
+        id_hash_submitted = any((request.POST.get(k) or "").strip() for k in ["old_id_hash", "new_id_hash"])
 
         user_ok = user_form.is_valid()
         pwd_ok  = (pwd_form.is_valid()  if pwd_submitted else True)
         addr_ok = (addr_form.is_valid() if addr_submitted else True)
+        # 檢查身份證表單驗證結果
+        id_hash_ok = (id_hash_form.is_valid() if id_hash_submitted else True) 
 
-        if not (user_ok and pwd_ok and addr_ok):
+        # 將 id_hash_ok 加入到總驗證判斷
+        if not (user_ok and pwd_ok and addr_ok and id_hash_ok):
             return render(request, "common/edit_profile.html", {
                 "user_form": user_form,
                 "pwd_form": pwd_form,
                 "addr_form": addr_form,
+                "id_hash_form": id_hash_form,
+                "is_id_hash_missing": is_id_hash_missing,
                 "city_choices": city_choices,
                 "user_address": user_address,
                 "accounts": PaymentAccount.active.filter(user=user),
@@ -173,6 +191,11 @@ def editProfile(request):
                 user.set_password(new_password)
                 user.save()
                 update_session_auth_hash(request, user)  # 保持登入
+
+        # 寫入身份證（有輸入才變更）
+        if id_hash_submitted and id_hash_ok: # 增加 id_hash_ok 判斷是為了更嚴謹
+            id_hash_form.save()
+            messages.info(request, "身份證字號已變更/填寫完成。")
 
         # 寫入 Profile（暱稱/自介/頭像）
         profile.nickname = request.POST.get("nickname", "") or ""
@@ -213,10 +236,17 @@ def editProfile(request):
     pwd_form  = ChangePasswordForm()
     addr_form = AddressForm(initial=initial_addr)
 
+    if is_id_hash_missing:
+        id_hash_form = InitialIdHashForm(user=user)
+    else:
+        id_hash_form = UpdateIdHashForm(user=user)
+
     return render(request, "common/edit_profile.html", {
         "user_form": user_form,
         "pwd_form": pwd_form,
         "addr_form": addr_form,
+        "id_hash_form": id_hash_form,
+        "is_id_hash_missing": is_id_hash_missing,
         "city_choices": city_choices,
         "user_address": user_address,
         "accounts": PaymentAccount.active.filter(user=user),
@@ -228,13 +258,15 @@ def editProfile(request):
 @login_required
 def edit_id_hash(request):
     user = request.user
+    
     if request.method == "POST":
-        form = IdHashForm(request.POST, instance=user)
+        form = UpdateIdHashForm(request.POST, user=user) 
         if form.is_valid():
-            form.save()
+            form.save() # 調用新的 save 方法
             messages.success(request, "身份證字號已更新")
-            return redirect("editprofile")  # 或跳回同頁
+            return redirect("editprofile") # 或跳回同頁
     else:
-        form = IdHashForm(instance=user)
+        form = UpdateIdHashForm(user=user)
 
+    # 渲染時傳入新的表單對象
     return render(request, "common/edit_id_hash.html", {"form": form})
