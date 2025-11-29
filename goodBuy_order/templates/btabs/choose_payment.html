@@ -1,9 +1,4 @@
 {% load static %}
-{# tabs_buyer/choose_payment.html #}
-<div class="mb-3">
-  <h5 class="mb-0">待選付款方式</h5>
-</div>
-
 {% if orders %}
   <div class="order-container">
     {% for order in orders %}
@@ -76,5 +71,5 @@
     {% endfor %}
   </div>
 {% else %}
-  <div class="alert ">目前沒有需要選擇付款方式的訂單。</div>
+  <div class="wait-c">目前沒有需要選擇付款方式的訂單。</div>
 {% endif %}

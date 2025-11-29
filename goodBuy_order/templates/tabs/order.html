@@ -3,7 +3,7 @@
 
 {# ----------------- 待確認付款 ----------------- #}
 <div class="mb-3">
-  <h5 class="mb-0">待確認付款</h5>
+  <h5 class="wait-c">待確認付款</h5>
 </div>
 
 {% if orders_wait_seller %}
@@ -94,13 +94,13 @@
     {% endfor %}
   </div>
 {% else %}
-  <div class="alert">目前沒有「待確認付款」的訂單。</div>
+  <div class="wait-c">目前沒有「待確認付款」的訂單。</div>
 {% endif %}
 
 
 {# ----------------- 接單請求 ----------------- #}
 <div class="mb-3 mt-4">
-  <h5 class="mb-0">接單請求</h5>
+  <h5 class="wait-c">接單請求</h5>
 </div>
 
 {% if orders_wait_seller|dictsort:"id"|yesno:"yes,no" %}
@@ -201,5 +201,5 @@
     {% endfor %}
   </div>
 {% else %}
-  <div class="alert">目前沒有「接單請求」的訂單。</div>
+  <div class="wait-c">目前沒有「接單請求」的訂單。</div>
 {% endif %}

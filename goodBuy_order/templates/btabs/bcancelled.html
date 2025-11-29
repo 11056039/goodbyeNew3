@@ -1,9 +1,4 @@
 {% load static %}
-{# templates/btabs/cancelled.html #}
-<div class="mb-3">
-  <h5 class="mb-0">已取消</h5>
-</div>
-
 {% if orders_cancelled %}
   <div class="order-container">
     {% for order in orders_cancelled %}
@@ -61,5 +56,5 @@
     {% endfor %}
   </div>
 {% else %}
-  <div class="alert ">目前沒有已取消的訂單。</div>
+  <div class="wait-c">目前沒有已取消的訂單。</div>
 {% endif %}
