@@ -62,7 +62,7 @@
     </div>
 
     <!-- 自我介紹 -->
-        <p class="profile-bio">
+        <p class="font-s profile-bio">
             {% if profile_user.profile.bio %}
                 {{ profile_user.profile.bio|linebreaksbr }}
             {% else %}
@@ -91,7 +91,7 @@
             </a>
           </div>
         {% empty %}
-          <div class="col-12 text-muted">這位使用者還沒有賣場</div>
+          <div class="col-12 font-s text-muted">這位使用者還沒有賣場</div>
         {% endfor %}
 
         {% if user_shops|length > 4 %}
@@ -116,7 +116,7 @@
             </a>
           </div>
         {% empty %}
-          <div class="col-12 text-muted">這位使用者還沒有收物文</div>
+          <div class="col-12 font-s text-muted">這位使用者還沒有收物文</div>
         {% endfor %}
 
         {% if user_wants|length > 4 %}
