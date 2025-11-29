@@ -12,134 +12,125 @@
     {% include 'common/header.html' %}
 </head>
 <body>
-    <div class="container main-content">
-        <div class="row g-0">
-            <!-- 上方資訊 -->
-                <!-- 收物主個人資訊 -->
-                {% include 'info_w.html' %}
-            </div>
-            
-            <!-- 收物帖詳情 -->             
-                <div class="card">
-                    <div class="action-buttons d-flex gap-2 justify-content-end">
-                    {% if request.user == want.user %}
-                        <div class="action-buttons d-flex gap-2">
-                        <a href="{% url 'edit_want' want_id=want.id %}" class="action-btn edit-btn btn-outline-secondary" title="編輯">
-                            <img src="{% static 'img/edit-text.png' %}" alt="編輯" class="icon-img"/>
-                        </a>
-                        <button type="button" class="action-btn delete-btn btn-outline-secondary" title="刪除" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                            <img src="{% static 'img/delete.png' %}" alt="刪除" class="icon-img"/>
-                        </button>
-                        </div>
-                    {% endif %}
-                    </div>
+<div class="container main-content">
 
-                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
-                        
-                        <h5 class="mb-0 d-none">收物帖詳情</h5> 
-                    </div>
-
-                    <div class="card-body">
-
-                        <div class="want-detail-wrapper d-flex">
-
-                            <!-- 左欄：圖片區 -->
-                            <div class="want-image-section d-flex">
-
-                                <div class="image-section mb-3 d-flex gap-3">
-                                    <!-- 縮圖區域 -->
-                                    <div class="image-gallery">
-                                        {% for img in want.images.all|dictsort:"position" %}
-                                            <div class="gallery-item {% if img.is_cover %}active{% endif %}" data-src="{{ img.img.url }}">
-                                                <img src="{{ img.img.url }}" alt="Gallery Image">
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-
-                                <!-- 圖片區域 -->
-                                <div class="mb-3">
-                                    {% for img in want.images.all %}
-                                        {% if img.is_cover %}
-                                            <img src="{{ img.img.url }}" alt="{{ want.title }}" class="cover-image img-fluid mb-3 main-cover-img" id="main-image">
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-
-                            <!-- 右欄：文字內容 -->
-                            <div class="want-info-section ms-4">
-
-                                <!-- 收物帖標題 -->
-                                <h4>{{ want.title }}</h4>
-                                <div class="d-flex justify-content-between">
-                                    <p class="text-muted mb-2">
-                                        <small>發布者: {{ want.user.username }} | 更新於: {{ want.update|date:"Y/m/d H:i" }}</small>
-                                    </p>
-                                </div>
-                                    
-                                <!-- 標籤 -->
-                                {% include 'detail/want_tags.html' %}
-
-                                <!-- 收物帖內容 -->
-                                <div class="mb-4 ">
-                                    <h5>詳細描述</h5>
-                                    <div class="p-3 bg-light rounded">
-                                        {{ want.post_text|linebreaksbr }}
-                                    </div>
-                                </div>
-                            <!-- 分享售物帖按鈕 -->
-                            {% if request.user.is_authenticated and request.user != want.user %}
-                            <div class="share-btn-wrapper">
-                            <a href="{% url 'choose_shop_and_reply' want_id=want.id %}"class="fab-share-text" aria-label="立即分享！">立即分享！
-                            </a>
-                            </div>
-                            {% endif %}
-
-                            </div>
-                        </div>
-
-                    
-                    
-                </div>
-
-            </div>
-        </div>
-        <!-- 別人分享的賣場 -->
-        {% if request.user.is_authenticated and request.user.id == want.user_id and shared_shops %}
-            <hr>
-            <h5 class="mb-3">有人分享了以下賣場給你：</h5>
-            <div class="shared-grid">
-                {% for s in shared_shops %}
-                    <a class="shared-card-link" href="{% url 'shop' shop_id=s.id %}">
-                        {% include "common/card_item.html" with type='sell' shop=s %}
-                    </a>
-                {% endfor %}
-            </div>
-        {% endif %}
+    <!-- 上方用戶資訊 -->
+    <div class="row g-0 mb-3">
+        {% include 'info_w.html' %}
     </div>
 
-    {% if request.user == want.user %}
-    <!-- 刪除確認彈窗 -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">確定要刪除這則收物帖嗎？</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- 收物帖卡片 -->
+    <div class="card mb-4">
+        <!-- 動作按鈕 -->
+        <div class="action-buttons d-flex justify-content-end p-2">
+            {% if request.user == want.user %}
+            <a href="{% url 'edit_want' want_id=want.id %}" class="action-btn edit-btn" title="編輯">
+                <img src="{% static 'img/edit-text.png' %}" alt="編輯" class="icon-img"/>
+            </a>
+            <button type="button" class="action-btn delete-btn" title="刪除" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <img src="{% static 'img/delete.png' %}" alt="刪除" class="icon-img"/>
+            </button>
+            {% endif %}
+        </div>
+
+        <div class="card-body">
+
+            <!-- 主要內容區（響應式：桌機左右、手機上下） -->
+            <div class="want-detail-wrapper d-flex flex-column flex-lg-row">
+
+                <!-- 左側圖片區 -->
+                <div class="want-image-section d-flex flex-column flex-lg-row mb-3 mb-lg-0">
+
+                    <!-- 縮圖區 -->
+                    <div class="image-gallery mb-2 mb-lg-0 me-lg-3">
+                        {% for img in want.images.all|dictsort:"position" %}
+                        <div class="gallery-item {% if img.is_cover %}active{% endif %}" data-src="{{ img.img.url }}">
+                            <img src="{{ img.img.url }}" alt="Gallery Image">
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- 主圖 -->
+                    <div>
+                        {% for img in want.images.all %}
+                            {% if img.is_cover %}
+                                <img src="{{ img.img.url }}" alt="{{ want.title }}" class="cover-image img-fluid mb-3 main-cover-img" id="main-image">
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
                 </div>
-                <div class="modal-body">
-                    此操作無法復原
+
+                <!-- 右側文字內容 -->
+                    <div class="flex-grow-1 d-flex flex-column">
+
+                        <!-- 標題與發布資訊 -->
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5>{{ want.title }}</h5>
+                                <small class="text-muted">發布者: {{ want.user.username }} | 更新於: {{ want.update|date:"Y/m/d H:i" }}</small>
+                                {% include 'detail/want_tags.html' %}
+                            </div>
+
+                            <div class="d-flex flex-column flex-sm-row gap-2">
+
+                            </div>
+                        </div>
+
+                        <!-- 詳細描述 -->
+                        <div class="mb-3 p-3 bg-light rounded">
+                            {{ want.post_text|linebreaksbr }}
+                        </div>
+
+                    <!-- 分享按鈕（非帖主） -->
+                    {% if request.user.is_authenticated and request.user != want.user %}
+                        <div class="share-btn-wrapper w-100 mt-2">
+                            <a href="{% url 'choose_shop_and_reply' want_id=want.id %}" class="fab-share-text btn btn-primary">立即分享！</a>
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <a href="{% url 'delete_want' want_id=want.id %}" class="btn btn-danger">確認刪除</a>
-                </div>
+
             </div>
         </div>
+    </div>
+
+    <!-- 別人分享的賣場 -->
+    {% if request.user.is_authenticated and request.user.id == want.user_id and shared_shops %}
+    <hr>
+    <h5 class="mb-3">有人分享了以下賣場給你：</h5>
+    <div class="shared-grid">
+        {% for s in shared_shops %}
+        <a class="shared-card-link" href="{% url 'shop' shop_id=s.id %}">
+            {% include "common/card_item.html" with type='sell' shop=s %}
+        </a>
+        {% endfor %}
     </div>
     {% endif %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/want_detail.js' %}"></script>
+</div>
+
+{% if request.user == want.user %}
+<!-- 刪除確認彈窗 -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">確定要刪除這則收物帖嗎？</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                此操作無法復原
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <a href="{% url 'delete_want' want_id=want.id %}" class="btn btn-danger">確認刪除</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/want_detail.js' %}"></script>
 </body>
 </html>

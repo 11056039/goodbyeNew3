@@ -10,7 +10,7 @@ body {
     padding-top: 1rem;
 }
 
-/* 框 */
+/* 卡片框 */
 .card {
     border: 3px solid #d4dce2;
     border-radius: 10px;
@@ -22,17 +22,17 @@ body {
     padding: 0;
 }
 
-/* 隱藏卡片標題（例如 "發布者資訊"） */
+/* 隱藏卡片標題 */
 .card-header {
     display: none !important;
 }
 
-/* 標題樣式 */
+/* 標題 */
 h4, h5 {
     font-weight: 600;
 }
 
-/* 副標題／時間資訊 */
+/* 副標題/文字 */
 .text-muted {
     font-size: 0.9rem;
     color: #7D7D7D !important;
@@ -47,9 +47,9 @@ h4, h5 {
     object-fit: cover;
 }
 
-/* 想要帖主圖 */
+/* 主圖 */
 .main-cover-img,
-.cover-image { 
+.cover-image {
     width: 480px;
     max-width: 100%;
     height: 480px;
@@ -58,21 +58,36 @@ h4, h5 {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* 隱藏 "詳細敘述" 字樣 */
+/* 手機主圖較矮 */
+@media (max-width: 768px) {
+    .main-cover-img,
+    .cover-image {
+        height: auto;
+        max-height: 320px;
+        object-fit: contain;
+    }
+}
+
+/* 隱藏「詳細描述」字樣 */
 .want-info-section h5 {
     display: none;
 }
 
-/* 縮圖區域 */
+
+/* 主要版面間距 */
+.want-detail-wrapper {
+    gap: 20px;
+}
+/* 縮圖區：預設直向排列（桌機） */
 .image-gallery {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 10px;
     max-width: 100px;
     margin-right: 1rem;
 }
 
-/* 每個縮圖樣式 */
+/* 縮圖樣式 */
 .gallery-item img {
     width: 80px;
     height: 80px;
@@ -80,22 +95,25 @@ h4, h5 {
     border: 2px solid transparent;
     border-radius: 5px;
     cursor: pointer;
+    transition: 0.2s;
 }
 
-/* 被選中或滑過的縮圖邊框 */
+/* 被選中縮圖 */
 .gallery-item.active img,
-.gallery-item:hover img,
-.image-gallery img:hover {
-    border-color: #0d6efd; 
+.gallery-item:hover img {
+    border-color: #0d6efd;
 }
 
-/* 主圖與縮圖橫向排列 */
+/* 主圖與縮圖橫向排列（桌機） */
 .image-section {
     display: flex;
     gap: 16px;
     align-items: flex-start;
 }
 
+/* ===========================
+   操作按鈕區
+   =========================== */
 .btn-outline-secondary {
     margin-right: 10px;
     margin-top: 10px;
@@ -104,6 +122,7 @@ h4, h5 {
 .action-buttons {
     display: flex;
     gap: 8px;
+    margin-left: auto;
 }
 
 .action-btn {
@@ -128,18 +147,7 @@ h4, h5 {
     border-color: #999;
 }
 
-.edit-btn {
-    margin-top: 10px;
-    margin-right: 10px;
-    color: #2B5F75;
-    border-color: #2B5F75;
-}
-
-.edit-btn:hover {
-    background-color: #70B1CD;
-    border-color: #2B5F75;
-}
-
+.edit-btn,
 .delete-btn {
     margin-top: 10px;
     margin-right: 10px;
@@ -147,18 +155,14 @@ h4, h5 {
     border-color: #2B5F75;
 }
 
+.edit-btn:hover,
 .delete-btn:hover {
     background-color: #70B1CD;
     border-color: #2B5F75;
 }
-.action-buttons {
-  margin-left: auto;
-  display: flex;
-  gap: 8px;
-}
 
 .icon-img {
-    object-fit: contain;  /* 防止圖片變形 */
+    object-fit: contain;
     width: 24px;
     height: 24px;
     padding: 0;
@@ -168,3 +172,7 @@ h4, h5 {
     box-sizing: border-box;
 }
 
+.share-btn-wrapper {
+    height: 200px;
+    
+}
