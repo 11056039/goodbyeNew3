@@ -1,9 +1,8 @@
 {% load static %}
-{# templates/btabs/wait_seller.html #}
 
 {# ----------------- 待確認付款 ----------------- #}
 <div class="mb-3">
-  <h5 class="mb-0">待賣家確認付款</h5>
+  <h5 class="wait-c">待賣家確認付款</h5>
 </div>
 
 {% if orders_wait_seller|dictsort:"id"|yesno:"yes,no" %}
@@ -83,7 +82,7 @@
 
 {# ----------------- 接單請求 ----------------- #}
 <div class="mb-3 mt-4">
-  <h5 class="mb-0">賣家待確認接單</h5>
+  <h5 class="wait-c">賣家待確認接單</h5>
 </div>
 
 {% if orders_wait_seller %}
@@ -149,5 +148,5 @@
     {% endfor %}
   </div>
 {% else %}
-  <div class="alert">目前沒有賣家待確認的訂單。</div>
+  <div class="wait-c">目前沒有賣家待確認的訂單。</div>
 {% endif %}

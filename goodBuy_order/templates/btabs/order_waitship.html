@@ -1,9 +1,4 @@
 {% load static %}
-{# templates/tabs/order_waitship.html #}
-<div class="mb-3">
-  <h5 class="mb-0">待出貨</h5>
-</div>
-
 {% if orders_waitship %}
   <div class="order-container">
     {% for order in orders_waitship %}
@@ -60,5 +55,5 @@
     {% endfor %}
   </div>
 {% else %}
-  <div class="alert ">目前沒有待出貨的訂單。</div>
+  <div class="wait-c">目前沒有待出貨的訂單。</div>
 {% endif %}

@@ -1,9 +1,4 @@
 {% load static %}
-{# tabs/payment.html #}
-<div class="mb-3">
-  <h5 class="mb-0">待付款</h5>
-</div>
-
 {% if orders_need_payment %}
   <div class="order-container">
     {% for order in orders_need_payment %}
@@ -48,5 +43,5 @@
     {% endfor %}
   </div>
 {% else %}
-  <div class="alert">目前沒有「待買家付款」的訂單。</div>
+  <div class="wait-c">目前沒有「待買家付款」的訂單。</div>
 {% endif %}
