@@ -26,17 +26,29 @@
     </div>
 
     {% if type == 'sell' %}
-      <p class="card-text text-danger fw-bold">NTD ${{ shop.price_min }} - ${{ shop.price_max }}</p>
+      <p class="card-text text-danger fw-bold">
+          NTD $
+          {% if shop.price_min == shop.price_max %}
+              {{ shop.price_min }}
+          {% else %}
+              {{ shop.price_min }} - {{ shop.price_max }}
+          {% endif %}
+      </p>
     {% endif %}
+
 
     <div class="tag-list mt-auto">
       {% if type == 'sell' %}
         {% for tag in shop.shoptag_set.all|slice:":3" %}
-          <span class="badge bg-secondary me-1">#{{ tag.tag.name }}</span>
+          {% if tag.tag.name and tag.tag.name != "#" %}
+            <span class="badge bg-secondary me-1">#{{ tag.tag.name }}</span>
+          {% endif %}
         {% endfor %}
       {% else %}
         {% for tag in want.wanttag_set.all|slice:":3" %}
-          <span class="badge bg-secondary me-1">#{{ tag.tag.name }}</span>
+          {% if tag.tag.name and tag.tag.name != "#" %}
+            <span class="badge bg-secondary me-1">#{{ tag.tag.name }}</span>
+          {% endif %}
         {% endfor %}
       {% endif %}
     </div>
