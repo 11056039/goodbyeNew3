@@ -3,18 +3,17 @@
 }
 
 .row.main {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
   gap: 20px; /* 控制商品之間的左右與上下間距 */
+  box-sizing: border-box;
 }
 
 .row.main > div {
-  flex: 0 0 calc(25% - 20px); /* 每個商品佔六分之一寬度，扣除間距 */
-  box-sizing: border-box;
+   box-sizing: border-box;
 }
 .row.main .card {
-  transform: scale(0.9); /* 整體縮小 90% */
-  transform-origin: top center;
-  margin-top: 20%;
+  transform: none;
+  transform-origin: initial;
+  margin-top: 0;
+  border: 1px solid #eee;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
 }
