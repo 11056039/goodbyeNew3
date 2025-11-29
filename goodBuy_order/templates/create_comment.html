@@ -32,8 +32,6 @@
           <input type="hidden" name="rank" id="id_rank" value="0">
         </div>
 
-
-
         <!-- 評論文字 -->
         <div class="form-group mb-3">
             <label for="{{ form.comment.id_for_label }}">評論內容：</label>
@@ -41,7 +39,7 @@
         </div>
 
         <div class="button-group">
-            <a href="/orders/order/{{ order.id }}/" class="btn btn-secondary">取消</a>
+            <a href="{% url 'buyer' %}" class="btn btn-secondary">取消</a>
             <button type="submit" class="btn btn-primary">送出評論</button>
         </div>
     </form>

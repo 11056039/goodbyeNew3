@@ -174,3 +174,23 @@ body {
     background-color: #F4A7B9;;
     color: #fff;
 }
+
+.btn-confirm {
+    background-color: #F4A7B9 !important;
+    color: white !important;
+    padding: 10px 30px; 
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    text-decoration:none;
+}
+
+.btn-ok {
+    background-color:#d4edda;
+    color:#155724;
+    border:2px solid #c3e6cb;
+    pointer-events:none;
+    border-radius:8px;
+    padding:6px 18px;
+    font-weight:500;
+}

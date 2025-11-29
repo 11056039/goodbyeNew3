@@ -1,5 +1,4 @@
 {% load static %}
-{# templates/btabs/completed.html #}
 <div class="mb-3">
   <h5 class="mb-0">已完成</h5>
 </div>
@@ -57,14 +56,13 @@
 
             {% if order.has_commented_by_me %}
                 <!-- 已經評論過，淺綠色，不可點擊 -->
-                <button style="background-color:#d4edda;color:#155724;border:2px solid #c3e6cb;pointer-events:none;border-radius:8px;padding:6px 18px;font-weight:500;">
+                <button class="btn-ok">
                   評論完成
                 </button>
             {% else %}
                 <!-- 還沒評論，粉色立即評論 -->
-                <a href="{% url 'create_comment' order.id %}" 
-                   style="background-color:#E31720;color:white;border-radius:8px;padding:6px 18px;font-weight:500;text-decoration:none;display:inline-block;">
-                   立即評論
+                <a href="{% url 'create_comment' order.id %}" id="checkout-button" class="btn-confirm">
+                  立即評論
                 </a>
             {% endif %}
 
