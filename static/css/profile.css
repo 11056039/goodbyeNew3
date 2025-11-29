@@ -278,9 +278,10 @@ body {
 /* 評論卡片 */
 .review-card {
     background: #fff;
-    border: 1px solid #ddd;
+    border: 2px solid #ddd;
     border-radius: 12px;
     padding: 15px 20px;
+    border-color: #A3C6E0;
 }
 
 /* 頭像 + 名字 + 星數 */
@@ -321,6 +322,7 @@ body {
     margin-top: 10px;
     font-size: 15px;
     color: #444;
+    font-weight: 800;
 }
 
 /* 時間 */
@@ -330,8 +332,10 @@ body {
     color: #888;
 }
 
-
-
+/* 調整字體 */
+.font-s{
+  font-weight: 600;
+}
 
 /* =========================
    RWD 響應式調整
