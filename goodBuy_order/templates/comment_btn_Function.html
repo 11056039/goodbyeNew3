@@ -1,0 +1,13 @@
+<div class="mt-2 text-end">
+    {% if order.has_commented_by_me %}
+    <!-- 已經評論過，顯示「評論完成」 -->
+    <button class="btn-ok">
+        評論完成
+    </button>
+    {% else %}
+    <!-- 還沒評論，顯示「立即評論」 -->
+    <a href="{% url 'create_comment' order.id %}" id="checkout-button" class="btn-confirm">
+        立即評論
+    </a>
+    {% endif %}
+</div>
