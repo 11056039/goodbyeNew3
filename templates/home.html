@@ -39,7 +39,7 @@
     <!-- 卡片(shop&want) 要寫卡片樣式的去common/card.html--> 
     <div class="row g-3 justify-content-start">
       {% for item in items %}
-        <div class="col d-flex justify-content-center">
+        <div class="col-6 col-sm-4 col-md-3 d-flex justify-content-center">
           {% if item.post_type == 'shop' %}
             {% include 'common/card.html' with shop=item type='sell' %}
           {% elif item.post_type == 'want' %}
