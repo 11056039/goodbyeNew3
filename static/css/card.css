@@ -11,6 +11,9 @@
   height: 350px ;
   border-radius: 12px !important;
   overflow: hidden !important;
+  display: flex;
+  flex-direction: column;  
+
 }
 
 .border-pink {
@@ -24,11 +27,16 @@
 .card_B{
   width: 250px !important; 
   height: 350px !important;
+  display: flex;
+  flex-direction: column; 
 }
 
 .card-title{
   font-weight: bold;
   font-size: large;
+}
+.col {
+  display: flex; /* ★ 避免高度差造成上下重疊 */
 }
 
 /* ================================= */
