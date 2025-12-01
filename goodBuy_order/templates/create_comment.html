@@ -3,50 +3,64 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>對賣家評論</title>
+  <title>
+    {% if role == 'buyer' %}
+      對賣家評論
+    {% else %}
+      對買家評論
+    {% endif %}
+  </title>
+
   <link rel="stylesheet" href="{% static 'css/create_comment.css' %}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="{% static 'js/create_comment.js' %}" defer></script>
 </head>
-
-<script src="{% static 'js/create_comment.js' %}" defer></script>
 
 <body>
   <div class="header">{% include 'base.html' %}</div>
 
   <div class="container mt-4 comment-container">
-      <h2>關於這筆訂單，您有甚麼想告訴賣家的嗎?</h2>
+    <h2>
+      關於這筆訂單，您有甚麼想告訴
+      {% if role == 'buyer' %}
+        賣家
+      {% else %}
+        買家
+      {% endif %}
+      {{ target.username }} 的嗎？
+    </h2>
 
-      <form method="post" class="comment-form">
-          {% csrf_token %}
-          <form method="post" class="comment-form">
-    {% csrf_token %}
+    <form method="post" class="comment-form">
+      {% csrf_token %}
 
-        <!-- 星星評分 -->
-        <div class="form-group mb-3">
-          <label for="id_rank">評分：</label>
-          <div id="star-rating" class="star-rating">
-              {% for i in "12345" %}
-                  <i class="fa-regular fa-star star" data-value="{{ forloop.counter }}"></i>
-              {% endfor %}
-          </div>
-          <input type="hidden" name="rank" id="id_rank" value="0">
+      <!-- 星星評分 -->
+      <div class="form-group mb-3">
+        <label for="id_rank" class="font-s">評分：</label>
+        <div id="star-rating" class="star-rating">
+          {% for i in "12345" %}
+            <i class="fa-regular fa-star star" data-value="{{ forloop.counter }}"></i>
+          {% endfor %}
         </div>
+        <input type="hidden" name="rank" id="id_rank" value="{{ form.rank.value|default:0 }}">
+      </div>
 
+      <!-- 評論文字 -->
+      <div class="form-group mb-3">
+        <label for="{{ form.comment.id_for_label }}" class="font-s">評論內容：</label>
+        {{ form.comment }}
+      </div>
 
-
-        <!-- 評論文字 -->
-        <div class="form-group mb-3">
-            <label for="{{ form.comment.id_for_label }}">評論內容：</label>
-            {{ form.comment }}
-        </div>
-
-        <div class="button-group">
-            <a href="/orders/order/{{ order.id }}/" class="btn btn-secondary">取消</a>
-            <button type="submit" class="btn btn-primary">送出評論</button>
-        </div>
+      <div class="button-group">
+        {% if role == 'buyer' %}
+          <a href="{% url 'buyer' %}" class="btn btn-secondary">取消</a>
+        {% else %}
+          <a href="{% url 'seller' %}" class="btn btn-secondary">取消</a>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">送出評論</button>
+      </div>
     </form>
 
-      </form>
   </div>
 </body>
 </html>

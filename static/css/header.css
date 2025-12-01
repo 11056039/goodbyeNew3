@@ -35,8 +35,6 @@
     flex-direction: column;
 }
 
-
-
 a .logout-btn {
   text-decoration: none;
 }
@@ -742,3 +740,8 @@ a[href*="logout"] {
     height: 50px;
     margin-top:25px;
 }
+
+.editMyself{
+    text-decoration: none !important;
+    font-weight: bold !important;
+}   

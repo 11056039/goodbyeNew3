@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <title>{{ profile_user.username }} 的個人檔案</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/profile.css' %}">
   <link rel="stylesheet" href="{% static 'css/card.css' %}">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -62,7 +62,7 @@
     </div>
 
     <!-- 自我介紹 -->
-        <p class="profile-bio">
+        <p class="font-s profile-bio">
             {% if profile_user.profile.bio %}
                 {{ profile_user.profile.bio|linebreaksbr }}
             {% else %}
@@ -80,7 +80,7 @@
     {% else %}
 
       <!-- 售物卡片區（換成共用卡片） -->
-      <div class="profile-section-title">
+      <div class="profile-section-title ava-n">
         {{ profile_user.profile.nickname|default:profile_user.username }} 的賣場：
       </div>
       <div class="row g-4">
@@ -91,7 +91,7 @@
             </a>
           </div>
         {% empty %}
-          <div class="col-12 text-muted">這位使用者還沒有賣場</div>
+          <div class="col-12 font-s text-muted">這位使用者還沒有賣場</div>
         {% endfor %}
 
         {% if user_shops|length > 4 %}
@@ -116,7 +116,7 @@
             </a>
           </div>
         {% empty %}
-          <div class="col-12 text-muted">這位使用者還沒有收物文</div>
+          <div class="col-12 font-s text-muted">這位使用者還沒有收物文</div>
         {% endfor %}
 
         {% if user_wants|length > 4 %}

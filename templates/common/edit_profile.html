@@ -51,29 +51,39 @@
                     </div>
                 </div>
             </div>
-
+          
+            <!-- 身份證 -->
             <div class="section">
-                <div class="section-header">變更身分證：</div>
-                <div class="section-body">
-
-
-                    <div class="form-group grid-align">
-                        <label for="old_id">舊身分證：</label>
-                        <input type="text"
-                              name="old_id"
-                              id="old_id">
-                        {% include "common/field_error.html" with field=id_form.old_id %}
-                    </div>
-
-                    <div class="form-group grid-align">
-                        <label for="id_hash">新身分證：</label>
-                        <input type="text"
-                              name="id_hash"
-                              id="id_hash">
-                        {% include "common/field_error.html" with field=id_form.id_hash %}
-                    </div>
-                </div>
-            </div>
+              <div class="section-header">
+                  {% if is_id_hash_missing %}
+                      補實名認證：
+                  {% else %}
+                      變更身分證：
+                  {% endif %}
+              </div>
+              <div class="section-body">
+                  {% if is_id_hash_missing %}
+                      <div class="form-group grid-align">
+                          <label for="{{ id_hash_form.new_id_hash.id_for_label }}">身份證字號：</label> 
+                          {{ id_hash_form.new_id_hash }} 
+                          {% include "common/field_error.html" with field=id_hash_form.new_id_hash %}
+                      </div>
+                  {% else %}
+                      <div class="form-group grid-align">
+                          <label for="{{ id_hash_form.old_id_hash.id_for_label }}">舊身分證：</label> 
+                          {{ id_hash_form.old_id_hash }} 
+                          {% include "common/field_error.html" with field=id_hash_form.old_id_hash %}
+                      </div>
+                      <div class="form-group grid-align">
+                          <label for="{{ id_hash_form.new_id_hash.id_for_label }}">新身分證：</label>
+                          {{ id_hash_form.new_id_hash }} 
+                          {% include "common/field_error.html" with field=id_hash_form.new_id_hash %}
+                      </div>
+                      
+                  {% endif %}
+                  
+              </div>
+          </div>
 
             <!-- 更新密碼 -->
             <div class="section">

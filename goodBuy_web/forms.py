@@ -233,28 +233,118 @@ class AddressForm(forms.Form):
 #=============================
 # 修改身份證字號
 #=============================
-class IdHashForm(forms.ModelForm):
-    id_hash = forms.CharField(
+class UpdateIdHashForm(forms.Form):
+    old_id_hash = forms.CharField(
+        label="舊身份證字號",
+        max_length=10,
+        required=True,
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control", 
+            "placeholder": "請輸入舊身份證字號", 
+            "id": "old_id_hash" # 確保 ID 與前端匹配
+        })
+    )
+    
+    new_id_hash = forms.CharField(
+        label="新身份證字號",
+        max_length=10,
+        required=True,
+        widget=forms.PasswordInput(attrs={
+            "class": "form-control", 
+            "placeholder": "請輸入新身份證字號", 
+            "id": "new_id_hash" # 確保 ID 與前端匹配
+        })
+    )
+    
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None) 
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        
+        old_id = (cleaned_data.get("old_id_hash") or "").upper()
+        new_id = (cleaned_data.get("new_id_hash") or "").upper()
+        
+        if not self.user:
+            raise forms.ValidationError("用戶資訊錯誤，無法進行驗證。")
+            
+        # 驗證舊身分證 (舊哈希驗證)
+        old_id_hash_input = hashlib.sha256(old_id.encode("utf-8")).hexdigest()
+        if old_id_hash_input != self.user.id_hash:
+            self.add_error("old_id_hash", "舊身分證字號不正確或與系統記錄不符。")
+            
+        # 驗證新身分證格式
+        if not validate_tw_id(new_id):
+            self.add_error("new_id_hash", "新身份證字號格式不正確。")
+            return cleaned_data
+            
+        # 驗證新身分證唯一性
+        new_id_hash_to_save = hashlib.sha256(new_id.encode("utf-8")).hexdigest()
+        
+        qs = User.objects.filter(id_hash=new_id_hash_to_save)
+        # 排除當前用戶（如果新舊身分證一樣，理論上會排除自己）
+        if self.user.pk:
+            qs = qs.exclude(pk=self.user.pk)
+            
+        if qs.exists():
+            self.add_error("new_id_hash", "該身份證字號已被其他用戶使用。")
+            
+        # 將最終要儲存的哈希值存入 cleaned_data
+        cleaned_data["new_id_hash_hashed"] = new_id_hash_to_save
+        
+        return cleaned_data
+
+    def save(self):
+        """將新的哈希值儲存到 User 模型中"""
+        new_id_hash_hashed = self.cleaned_data.get("new_id_hash_hashed")
+        if new_id_hash_hashed and self.user:
+            self.user.id_hash = new_id_hash_hashed
+            self.user.save(update_fields=["id_hash"])
+            return self.user
+        return None
+    
+#=============================
+# 未實名用戶初次設定身份證字號
+#=============================
+class InitialIdHashForm(forms.Form):
+    new_id_hash = forms.CharField(
         label="身份證字號",
         max_length=10,
         required=True,
-        widget=forms.TextInput(attrs={"class":"form-control", "placeholder":"請輸入身份證字號"})
+        widget=forms.TextInput(attrs={
+            "class": "form-control", 
+            "placeholder": "請輸入身份證字號", 
+            "id": "new_id_hash"
+        })
     )
+    
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
 
-    class Meta:
-        model = User
-        fields = ["id_hash"]
-
-    def clean_id_hash(self):
-        raw_id = (self.cleaned_data.get("id_hash") or "").upper()
-        if not validate_tw_id(raw_id):
-            raise forms.ValidationError("身份證字號格式不正確")
-
-        id_hash = hashlib.sha256(raw_id.encode("utf-8")).hexdigest()
-        qs = User.objects.filter(id_hash=id_hash)
-        if self.instance.pk:
-            qs = qs.exclude(pk=self.instance.pk)
+    def clean_new_id_hash(self):
+        new_id = (self.cleaned_data.get("new_id_hash") or "").upper()
+        
+        # 驗證新身分證格式
+        if not validate_tw_id(new_id):
+            raise forms.ValidationError("身份證字號格式不正確。")
+            
+        # 驗證新身分證唯一性
+        new_id_hash_to_save = hashlib.sha256(new_id.encode("utf-8")).hexdigest()
+        
+        # 檢查該哈希值是否已被其他用戶使用
+        qs = User.objects.filter(id_hash=new_id_hash_to_save)
         if qs.exists():
-            raise forms.ValidationError("該身份證字號已被使用")
+            raise forms.ValidationError("該身份證字號已被其他用戶使用。")
+            
+        return new_id_hash_to_save # clean 函數返回哈希值
 
-        return id_hash
+    def save(self):
+        new_id_hash_hashed = self.cleaned_data.get("new_id_hash") 
+        if new_id_hash_hashed and self.user:
+            self.user.id_hash = new_id_hash_hashed
+            self.user.save(update_fields=["id_hash"])
+            return self.user
+        return None
+    

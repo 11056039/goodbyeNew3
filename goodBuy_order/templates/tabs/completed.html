@@ -1,8 +1,4 @@
 {% load static %}
-{# templates/tabs/completed.html #}
-<div class="mb-3">
-  <h5 class="mb-0">已完成</h5>
-</div>
 
 {% if orders_completed %}
   <div class="order-container">
@@ -56,9 +52,13 @@
             <span class="fw-bold">總金額：<span class="money">${{ order.total }}</span></span>
           </div>
         </div>
+
+        <!-- 評論功能 -->
+        {% include '../comment_btn_Function.html' %}
+
       </div>
     {% endfor %}
   </div>
 {% else %}
-  <div class="alert">目前沒有已完成的訂單。</div>
+  <div class="wait-c">目前沒有已完成的訂單。</div>
 {% endif %}
