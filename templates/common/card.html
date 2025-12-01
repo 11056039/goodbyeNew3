@@ -4,7 +4,7 @@
 <!-- 卡片連結 (售物帖 / 收物帖） -->
 <a href="{% if type == 'sell' %}{% url 'shop' shop_id=shop.id %}{% else %}{% url 'want_detail' want_id=want.id %}{% endif %}" class="text-decoration-none">
    <!-- 卡片邊框 粉紅色：售物帖，藍色：收物帖） -->
-  <div class="card border-4 h-100 post-card {% if type == 'sell' %} border-pink {% else %} border-blue {% endif %}" class = "card_B">
+  <div class="card border-4 h-100 post-card {% if type == 'sell' %}border-pink{% else %}border-blue{% endif %}">
     <!-- 圖片區 -->
     <div class="image-wrapper d-flex justify-content-center align-items-center">
       {% if type == 'sell' and shop.images.exists %}

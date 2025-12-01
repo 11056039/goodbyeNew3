@@ -2,18 +2,3 @@
   padding-top: 100px; /* 頁首的間距 */
 }
 
-.row.main {
-  gap: 20px; /* 控制商品之間的左右與上下間距 */
-  box-sizing: border-box;
-}
-
-.row.main > div {
-   box-sizing: border-box;
-}
-.row.main .card {
-  transform: none;
-  transform-origin: initial;
-  margin-top: 0;
-  border: 1px solid #eee;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
-}
