@@ -87,7 +87,8 @@
       <div class="row g-4">
         {% for shop in user_shops|slice:":4" %}
           <div class="col-6 col-md-3 d-flex justify-content-center">
-            <a href="{% url 'shop' shop.id %}" class="text-decoration-none">
+            <a href="{% url 'shop' shop.id %}" 
+              class="text-decoration-none post-card-link">
               {% include 'common/card_item.html' with type='sell' shop=shop %}
             </a>
           </div>
@@ -112,7 +113,8 @@
       <div class="row g-4">
         {% for want in user_wants|slice:":4" %}
           <div class="col-6 col-md-3 d-flex justify-content-center">
-            <a href="{% url 'want_detail' want.id %}" class="text-decoration-none">
+            <a href="{% url 'want_detail' want.id %}" 
+              class="text-decoration-none post-card-link">
               {% include 'common/card_item.html' with type='want' want=want %}
             </a>
           </div>

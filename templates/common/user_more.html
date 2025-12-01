@@ -22,7 +22,8 @@
       {% if tab == 'shops' %}
         {% for shop in items %}
           <div class="col-6 col-md-3 d-flex justify-content-center">
-            <a href="{% url 'shop' shop.id %}" class="text-decoration-none">
+            <a href="{% url 'shop' shop.id %}" 
+              class="text-decoration-none post-card-link">
               {% include 'common/card_item.html' with type='sell' shop=shop %}
             </a>
           </div>
@@ -32,7 +33,8 @@
       {% else %}
         {% for want in items %}
           <div class="col-6 col-md-3 d-flex justify-content-center">
-            <a href="{% url 'want_detail' want.id %}" class="text-decoration-none">
+            <a href="{% url 'want_detail' want.id %}" 
+              class="text-decoration-none post-card-link">
               {% include 'common/card_item.html' with type='want' want=want %}
             </a>
           </div>

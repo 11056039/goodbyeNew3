@@ -270,6 +270,15 @@ body {
   font-weight: 600;
 }
 
+.post-card-link {
+  text-decoration: none !important;
+  display: flex;
+  width: 100%;     /* 關鍵：吃滿 col 的寬度 */
+  height: 100%;
+  justify-content: center;
+}
+
+
 /* =========================
    RWD 響應式調整
 ========================= */
@@ -307,9 +316,7 @@ body { overflow-x: hidden; }
 @media (max-width: 992px) {
   .profile-header,
   .profile-container2 {
-    margin: 90px auto 24px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 130px auto 24px;
     padding: 16px 20px;
     width: min(100%, 920px);
   }
@@ -319,10 +326,11 @@ body { overflow-x: hidden; }
 @media (max-width: 768px) {
   .profile-header,
   .profile-container2 {
-    margin: 80px auto 20px;
+    margin: 130px auto 20px;
     padding: 14px 16px;
     width: min(100%, 680px);
   }
+  
 
   /* 個人頭像縮小 + 文字不擠 */
   .profile-avatar {
@@ -356,13 +364,22 @@ body { overflow-x: hidden; }
   }
 }
 
-
 /* ======= 超小螢幕（<= 400px） ======= */
 @media (max-width: 400px) {
   .profile-avatar { width: 72px; height: 72px; }
   .profile-header .profile-basic h2 { font-size: 1.3rem; }
   .more-btn { font-size: 0.95rem; }
+
+  .post-card-link {
+  text-decoration: none !important;
+  display: flex;
+  width: 100%;     /* 關鍵：吃滿 col 的寬度 */
+  height: 100%;
+  justify-content: center;
 }
+
+}
+
 
 /* ======= 可捲動卡片列（若你的卡片很多、想保留橫向瀏覽） ======= */
 @media (max-width: 768px) {
@@ -377,6 +394,8 @@ body { overflow-x: hidden; }
     min-width: 75%;
     scroll-snap-align: start;
   }
+
+  
 }
 
 .ava-n {
