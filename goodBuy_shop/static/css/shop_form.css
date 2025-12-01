@@ -266,3 +266,12 @@ head {
   overflow: hidden;           /* 超出隱藏 */
   text-overflow: ellipsis;
 }
+
+@media (max-width: 576px) {
+  .image-upload-wrapper,
+  .image-upload-box,
+  .image-upload-box img {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
