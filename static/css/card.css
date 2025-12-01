@@ -8,9 +8,17 @@
   margin-top: 18px;
 }
 
+.post-card-link {
+  text-decoration: none;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
+
 /* 調整卡片大小 */
 .post-card {
-  width: 80%;
+  width: 100%;
   max-width: 100%;
   height: 100%;
   border-radius: 12px !important;
@@ -84,7 +92,14 @@
     max-width: 100%;
     height: auto;
   }
-
+  
+  .post-card-link {
+  text-decoration: none;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
   .post-card .card-body {
     padding: 4px 6px 8px;
   }
